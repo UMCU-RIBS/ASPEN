@@ -23,8 +23,16 @@ To connect to a SQL database, you can do:
 ```bash
 xelo2
 ```
-and then log in with the prompt screen. Or you can pass the credentials directly (in plain text...):
+and then log in with the prompt screen. Or you can pass the credentials directly:
 
 ```bash
-xelo2 --mysql DATABASE_NAME -U USERNAME -P PASSWORD
+xelo2 --mysql DATABASE_NAME -U USERNAME
+```
+
+and you'll be prompted for the password.
+
+If it's not on `localhost`, you can specify your hostname, called `HOSTNAME`:
+
+```bash
+xelo2 --mysql DATABASE_NAME -U USERNAME -H HOSTNAME
 ```

@@ -1,5 +1,6 @@
 from logging import getLogger, StreamHandler
 from argparse import ArgumentParser
+from getpass import getpass
 import sys
 
 from PyQt5.QtWidgets import QApplication
@@ -40,8 +41,13 @@ def main():
         help='host name (if different from localhost)')
     args = parser.parse_args()
 
-    if args.mysql is not None:
-        w = Interface(args.mysql, args.username, args.password, args.hostname)
+    if args.mysql is not None and args.username is not None:
+        if args.password is not None:
+            password = args.password
+        else:
+            password = getpass()
+
+        w = Interface(args.mysql, args.username, password, args.hostname)
     else:
         w = Interface()
 
