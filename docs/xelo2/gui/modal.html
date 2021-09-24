@@ -41,11 +41,9 @@ from PyQt5.QtWidgets import (
     QMenu,
     QPushButton,
     QSizePolicy,
-    QStackedLayout,
     QTableWidget,
     QTableWidgetItem,
     QVBoxLayout,
-    QWidget,
     )
 from PyQt5.QtCore import Qt
 
@@ -422,64 +420,33 @@ class Popup_IntendedFor(QPushButton):
 
 
 class AccessDatabase(QDialog):
-    EMPTY_PUSHBUTTON = &#39;(click to select file)&#39;
 
     def __init__(self, parent):
         super().__init__(parent)
         self.setWindowModality(Qt.WindowModal)
-
-        self.db_type = QComboBox()
-        self.db_type.addItems([&#39;mysql / mariadb&#39;, &#39;sqlite&#39;])
-        self.db_type.currentTextChanged.connect(self.switch_dbtype)
 
         bbox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         bbox.accepted.connect(self.accept)
         bbox.rejected.connect(self.reject)
 
         self.db_name = QLineEdit()
+        self.hostname = QLineEdit()
+        self.hostname.setText(&#39;127.0.0.1&#39;)
         self.username = QLineEdit()
         self.password = QLineEdit()
         self.password.setEchoMode(QLineEdit.Password)
 
-        layout = QFormLayout()
-        layout.addRow(&#39;Database Name&#39;, self.db_name)
-        layout.addRow(&#39;Username&#39;, self.username)
-        layout.addRow(&#39;Password&#39;, self.password)
-        mysql = QWidget()
-        mysql.setLayout(layout)
-
-        self.sqlite_path = QPushButton(self.EMPTY_PUSHBUTTON)
-        self.sqlite_path.clicked.connect(self.select_file)
-        layout = QFormLayout()
-        layout.addRow(&#39;Path to Database&#39;, self.sqlite_path)
-        sqlite = QWidget()
-        sqlite.setLayout(layout)
-
-        self.stacked = QStackedLayout()
-        self.stacked.addWidget(mysql)
-        self.stacked.addWidget(sqlite)
+        formlayout = QFormLayout()
+        formlayout.addRow(&#39;Database Name&#39;, self.db_name)
+        formlayout.addRow(&#39;Hostname&#39;, self.hostname)
+        formlayout.addRow(&#39;Username&#39;, self.username)
+        formlayout.addRow(&#39;Password&#39;, self.password)
 
         layout = QVBoxLayout()
-        layout.addWidget(self.db_type)
-        layout.addLayout(self.stacked)
+        layout.addLayout(formlayout)
         layout.addWidget(bbox)
 
         self.setLayout(layout)
-
-    def switch_dbtype(self, selected):
-        if selected == &#39;sqlite&#39;:
-            self.stacked.setCurrentIndex(1)
-        else:
-            self.stacked.setCurrentIndex(0)
-
-    def select_file(self):
-        out = QFileDialog.getOpenFileName(
-            self,
-            &#39;Open SQLITE database&#39;,
-            None,
-            &#34;SQLITE database (*.*)&#34;)[0]
-        if out != &#39;&#39;:
-            self.sqlite_path.setText(out)
 
 
 def parse_accessdatabase(parent):
@@ -487,22 +454,14 @@ def parse_accessdatabase(parent):
     result = self.exec()
     DB_ARGS = {}
     if result:
-        if self.stacked.currentIndex() == 0:
-            DB_ARGS[&#39;db_type&#39;] = &#39;QMYSQL&#39;
-            db_name = self.db_name.text()
-            if db_name == &#39;&#39;:
-                return None
-            else:
-                DB_ARGS[&#39;db_name&#39;] = db_name
-            DB_ARGS[&#39;username&#39;] = self.username.text()
-            DB_ARGS[&#39;password&#39;] = self.password.text()
+        db_name = self.db_name.text()
+        if db_name == &#39;&#39;:
+            return None
         else:
-            DB_ARGS[&#39;db_type&#39;] = &#39;QSQLITE&#39;
-            db_name = self.sqlite_path.text()
-            if db_name == self.EMPTY_PUSHBUTTON:
-                return None
-            else:
-                DB_ARGS[&#39;db_name&#39;] = db_name
+            DB_ARGS[&#39;db_name&#39;] = db_name
+        DB_ARGS[&#39;username&#39;] = self.username.text()
+        DB_ARGS[&#39;password&#39;] = self.password.text()
+        DB_ARGS[&#39;hostname&#39;] = self.hostname.text()
 
         return DB_ARGS</code></pre>
 </details>
@@ -571,22 +530,14 @@ def parse_accessdatabase(parent):
     result = self.exec()
     DB_ARGS = {}
     if result:
-        if self.stacked.currentIndex() == 0:
-            DB_ARGS[&#39;db_type&#39;] = &#39;QMYSQL&#39;
-            db_name = self.db_name.text()
-            if db_name == &#39;&#39;:
-                return None
-            else:
-                DB_ARGS[&#39;db_name&#39;] = db_name
-            DB_ARGS[&#39;username&#39;] = self.username.text()
-            DB_ARGS[&#39;password&#39;] = self.password.text()
+        db_name = self.db_name.text()
+        if db_name == &#39;&#39;:
+            return None
         else:
-            DB_ARGS[&#39;db_type&#39;] = &#39;QSQLITE&#39;
-            db_name = self.sqlite_path.text()
-            if db_name == self.EMPTY_PUSHBUTTON:
-                return None
-            else:
-                DB_ARGS[&#39;db_name&#39;] = db_name
+            DB_ARGS[&#39;db_name&#39;] = db_name
+        DB_ARGS[&#39;username&#39;] = self.username.text()
+        DB_ARGS[&#39;password&#39;] = self.password.text()
+        DB_ARGS[&#39;hostname&#39;] = self.hostname.text()
 
         return DB_ARGS</code></pre>
 </details>
@@ -624,64 +575,33 @@ def parse_accessdatabase(parent):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class AccessDatabase(QDialog):
-    EMPTY_PUSHBUTTON = &#39;(click to select file)&#39;
 
     def __init__(self, parent):
         super().__init__(parent)
         self.setWindowModality(Qt.WindowModal)
-
-        self.db_type = QComboBox()
-        self.db_type.addItems([&#39;mysql / mariadb&#39;, &#39;sqlite&#39;])
-        self.db_type.currentTextChanged.connect(self.switch_dbtype)
 
         bbox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
         bbox.accepted.connect(self.accept)
         bbox.rejected.connect(self.reject)
 
         self.db_name = QLineEdit()
+        self.hostname = QLineEdit()
+        self.hostname.setText(&#39;127.0.0.1&#39;)
         self.username = QLineEdit()
         self.password = QLineEdit()
         self.password.setEchoMode(QLineEdit.Password)
 
-        layout = QFormLayout()
-        layout.addRow(&#39;Database Name&#39;, self.db_name)
-        layout.addRow(&#39;Username&#39;, self.username)
-        layout.addRow(&#39;Password&#39;, self.password)
-        mysql = QWidget()
-        mysql.setLayout(layout)
-
-        self.sqlite_path = QPushButton(self.EMPTY_PUSHBUTTON)
-        self.sqlite_path.clicked.connect(self.select_file)
-        layout = QFormLayout()
-        layout.addRow(&#39;Path to Database&#39;, self.sqlite_path)
-        sqlite = QWidget()
-        sqlite.setLayout(layout)
-
-        self.stacked = QStackedLayout()
-        self.stacked.addWidget(mysql)
-        self.stacked.addWidget(sqlite)
+        formlayout = QFormLayout()
+        formlayout.addRow(&#39;Database Name&#39;, self.db_name)
+        formlayout.addRow(&#39;Hostname&#39;, self.hostname)
+        formlayout.addRow(&#39;Username&#39;, self.username)
+        formlayout.addRow(&#39;Password&#39;, self.password)
 
         layout = QVBoxLayout()
-        layout.addWidget(self.db_type)
-        layout.addLayout(self.stacked)
+        layout.addLayout(formlayout)
         layout.addWidget(bbox)
 
-        self.setLayout(layout)
-
-    def switch_dbtype(self, selected):
-        if selected == &#39;sqlite&#39;:
-            self.stacked.setCurrentIndex(1)
-        else:
-            self.stacked.setCurrentIndex(0)
-
-    def select_file(self):
-        out = QFileDialog.getOpenFileName(
-            self,
-            &#39;Open SQLITE database&#39;,
-            None,
-            &#34;SQLITE database (*.*)&#34;)[0]
-        if out != &#39;&#39;:
-            self.sqlite_path.setText(out)</code></pre>
+        self.setLayout(layout)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -692,51 +612,6 @@ def parse_accessdatabase(parent):
 <li>PyQt5.QtGui.QPaintDevice</li>
 <li>sip.simplewrapper</li>
 </ul>
-<h3>Class variables</h3>
-<dl>
-<dt id="xelo2.gui.modal.AccessDatabase.EMPTY_PUSHBUTTON"><code class="name">var <span class="ident">EMPTY_PUSHBUTTON</span></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-</dl>
-<h3>Methods</h3>
-<dl>
-<dt id="xelo2.gui.modal.AccessDatabase.select_file"><code class="name flex">
-<span>def <span class="ident">select_file</span></span>(<span>self)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def select_file(self):
-    out = QFileDialog.getOpenFileName(
-        self,
-        &#39;Open SQLITE database&#39;,
-        None,
-        &#34;SQLITE database (*.*)&#34;)[0]
-    if out != &#39;&#39;:
-        self.sqlite_path.setText(out)</code></pre>
-</details>
-</dd>
-<dt id="xelo2.gui.modal.AccessDatabase.switch_dbtype"><code class="name flex">
-<span>def <span class="ident">switch_dbtype</span></span>(<span>self, selected)</span>
-</code></dt>
-<dd>
-<div class="desc"></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def switch_dbtype(self, selected):
-    if selected == &#39;sqlite&#39;:
-        self.stacked.setCurrentIndex(1)
-    else:
-        self.stacked.setCurrentIndex(0)</code></pre>
-</details>
-</dd>
-</dl>
 </dd>
 <dt id="xelo2.gui.modal.CalculateOffset"><code class="flex name class">
 <span>class <span class="ident">CalculateOffset</span></span>
@@ -1370,11 +1245,6 @@ QPushButton(QIcon, str, parent: QWidget = None)</p></div>
 <ul>
 <li>
 <h4><code><a title="xelo2.gui.modal.AccessDatabase" href="#xelo2.gui.modal.AccessDatabase">AccessDatabase</a></code></h4>
-<ul class="">
-<li><code><a title="xelo2.gui.modal.AccessDatabase.EMPTY_PUSHBUTTON" href="#xelo2.gui.modal.AccessDatabase.EMPTY_PUSHBUTTON">EMPTY_PUSHBUTTON</a></code></li>
-<li><code><a title="xelo2.gui.modal.AccessDatabase.select_file" href="#xelo2.gui.modal.AccessDatabase.select_file">select_file</a></code></li>
-<li><code><a title="xelo2.gui.modal.AccessDatabase.switch_dbtype" href="#xelo2.gui.modal.AccessDatabase.switch_dbtype">switch_dbtype</a></code></li>
-</ul>
 </li>
 <li>
 <h4><code><a title="xelo2.gui.modal.CalculateOffset" href="#xelo2.gui.modal.CalculateOffset">CalculateOffset</a></code></h4>

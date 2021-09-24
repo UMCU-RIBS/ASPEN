@@ -7,7 +7,6 @@ from datetime import date, datetime
 from shutil import copy, rmtree
 
 from bidso.utils import replace_extension
-from PyQt5.QtGui import QGuiApplication
 from PyQt5.QtSql import QSqlQuery
 
 from ..api import list_subjects, Run
@@ -30,8 +29,7 @@ PROTOCOL_HEALTHY = [
 lg = getLogger(__name__)
 
 
-def create_bids(db, data_path, deface=True, subset=None, progress=None,
-                keep_phase=False):
+def create_bids(db, data_path, deface=True, subset=None, keep_phase=False):
 
     if subset is not None:
         subset = add_intended_for(db, subset)
@@ -51,7 +49,6 @@ def create_bids(db, data_path, deface=True, subset=None, progress=None,
     intendedfor = {}
     scans_json = {}
 
-    i = 0
     participants = []
     for subj in list_subjects(db):
         bids_name = {
@@ -141,15 +138,6 @@ def create_bids(db, data_path, deface=True, subset=None, progress=None,
                 if len(run.list_recordings()) == 0:
                     lg.warning(f'No recordings for {subj.codes}/{run.task_name}')
                     continue
-
-                if progress is not None:
-                    progress.setValue(i)
-                    i += 1
-                    progress.setLabelText(f'Exporting "{subj.codes}" / "{sess.name}" / "{run.task_name}"')
-                    QGuiApplication.processEvents()
-
-                    if progress.wasCanceled():
-                        return
 
                 acquisition = get_bids_acquisition(run)
                 bids_name['run'] = f'run-{run_count[run.task_name]}'

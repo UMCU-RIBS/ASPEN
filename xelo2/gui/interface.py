@@ -306,7 +306,7 @@ class Interface(QMainWindow):
     def sql_access(self, db_name=None, username=None, password=None, hostname=None):
         """This is where you access the database
         """
-        self.db = access_database(db_name, username, password, hostname)
+        self.db = access_database(db_name, username, hostname, password)
         self.db['db'].transaction()
 
         self.events_model = EventsModel(self.db)
@@ -978,17 +978,25 @@ class Interface(QMainWindow):
             subset['sessions'].append(query.value(1))
             subset['runs'].append(query.value(2))
 
-        data_path = QFileDialog.getExistingDirectory()
+        data_path = QFileDialog.getSaveFileName(
+            self,
+            "Choose directory where to save the recordings in BIDS format",
+            'bids_output',
+            'Folder (*)',
+            )[0]
         if data_path == '':
             return
 
-        progress = QProgressDialog('', 'Cancel', 0, len(subset['runs']), self)
-        progress.setWindowTitle('Converting to BIDS')
-        progress.setMinimumDuration(0)
-        progress.setWindowModality(Qt.WindowModal)
+        data_path = Path(data_path).resolve()
+        if data_path.exists():
+            QMessageBox.warning(
+                self,
+                'Folder exists',
+                'This folder already exists. Make sure you choose a folder name that does not exist',
+                )
+            return
 
-        create_bids(self.db, Path(data_path), deface=False, subset=subset, progress=progress)
-        progress.setValue(len(subset['runs']))
+        create_bids(self.db, data_path, deface=False, subset=subset)
 
     def new_item(self, checked=None, level=None):
 

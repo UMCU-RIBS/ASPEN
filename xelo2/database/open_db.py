@@ -1,6 +1,7 @@
 """
 """
 from logging import getLogger
+from getpass import getpass
 
 from PyQt5.QtSql import (
     QSqlDatabase,
@@ -12,7 +13,9 @@ from .tables import parse_all_tables, parse_subtables, LEVELS, EXPECTED_TABLES
 lg = getLogger(__name__)
 
 
-def access_database(db_name, username=None, password=None, hostname='localhost'):
+def access_database(db_name, username, hostname='localhost', password=None):
+    if password is None:
+        password = getpass(f'Enter Password for user `{username}` to `{db_name}` (hostname: `{hostname}`):')
 
     db = open_database(db_name, username=username, password=password, hostname=hostname, connectionName='xelo2_database')
     info_schema = open_database('information_schema', username=username, password=password, hostname=hostname, connectionName='info')

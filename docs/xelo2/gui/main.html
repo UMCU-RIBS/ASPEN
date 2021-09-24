@@ -26,6 +26,7 @@
 </summary>
 <pre><code class="python">from logging import getLogger, StreamHandler
 from argparse import ArgumentParser
+from getpass import getpass
 import sys
 
 from PyQt5.QtWidgets import QApplication
@@ -61,10 +62,18 @@ def main():
     parser.add_argument(
         &#39;-P&#39;, &#39;--password&#39;, default=None,
         help=&#39;MYSQL password&#39;)
+    parser.add_argument(
+        &#39;-H&#39;, &#39;--hostname&#39;, default=&#39;localhost&#39;,
+        help=&#39;host name (if different from localhost)&#39;)
     args = parser.parse_args()
 
-    if args.mysql is not None:
-        w = Interface(args.mysql, args.username, args.password)
+    if args.mysql is not None and args.username is not None:
+        if args.password is not None:
+            password = args.password
+        else:
+            password = getpass()
+
+        w = Interface(args.mysql, args.username, password, args.hostname)
     else:
         w = Interface()
 
@@ -119,10 +128,18 @@ if __name__ == &#39;__main__&#39;:
     parser.add_argument(
         &#39;-P&#39;, &#39;--password&#39;, default=None,
         help=&#39;MYSQL password&#39;)
+    parser.add_argument(
+        &#39;-H&#39;, &#39;--hostname&#39;, default=&#39;localhost&#39;,
+        help=&#39;host name (if different from localhost)&#39;)
     args = parser.parse_args()
 
-    if args.mysql is not None:
-        w = Interface(args.mysql, args.username, args.password)
+    if args.mysql is not None and args.username is not None:
+        if args.password is not None:
+            password = args.password
+        else:
+            password = getpass()
+
+        w = Interface(args.mysql, args.username, password, args.hostname)
     else:
         w = Interface()
 

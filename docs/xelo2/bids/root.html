@@ -33,7 +33,6 @@ from datetime import date, datetime
 from shutil import copy, rmtree
 
 from bidso.utils import replace_extension
-from PyQt5.QtGui import QGuiApplication
 from PyQt5.QtSql import QSqlQuery
 
 from ..api import list_subjects, Run
@@ -56,8 +55,7 @@ PROTOCOL_HEALTHY = [
 lg = getLogger(__name__)
 
 
-def create_bids(db, data_path, deface=True, subset=None, progress=None,
-                keep_phase=False):
+def create_bids(db, data_path, deface=True, subset=None, keep_phase=False):
 
     if subset is not None:
         subset = add_intended_for(db, subset)
@@ -77,7 +75,6 @@ def create_bids(db, data_path, deface=True, subset=None, progress=None,
     intendedfor = {}
     scans_json = {}
 
-    i = 0
     participants = []
     for subj in list_subjects(db):
         bids_name = {
@@ -167,15 +164,6 @@ def create_bids(db, data_path, deface=True, subset=None, progress=None,
                 if len(run.list_recordings()) == 0:
                     lg.warning(f&#39;No recordings for {subj.codes}/{run.task_name}&#39;)
                     continue
-
-                if progress is not None:
-                    progress.setValue(i)
-                    i += 1
-                    progress.setLabelText(f&#39;Exporting &#34;{subj.codes}&#34; / &#34;{sess.name}&#34; / &#34;{run.task_name}&#34;&#39;)
-                    QGuiApplication.processEvents()
-
-                    if progress.wasCanceled():
-                        return
 
                 acquisition = get_bids_acquisition(run)
                 bids_name[&#39;run&#39;] = f&#39;run-{run_count[run.task_name]}&#39;
@@ -575,7 +563,7 @@ def _find_columns(scans):
 </details>
 </dd>
 <dt id="xelo2.bids.root.create_bids"><code class="name flex">
-<span>def <span class="ident">create_bids</span></span>(<span>db, data_path, deface=True, subset=None, progress=None, keep_phase=False)</span>
+<span>def <span class="ident">create_bids</span></span>(<span>db, data_path, deface=True, subset=None, keep_phase=False)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -583,8 +571,7 @@ def _find_columns(scans):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def create_bids(db, data_path, deface=True, subset=None, progress=None,
-                keep_phase=False):
+<pre><code class="python">def create_bids(db, data_path, deface=True, subset=None, keep_phase=False):
 
     if subset is not None:
         subset = add_intended_for(db, subset)
@@ -604,7 +591,6 @@ def _find_columns(scans):
     intendedfor = {}
     scans_json = {}
 
-    i = 0
     participants = []
     for subj in list_subjects(db):
         bids_name = {
@@ -694,15 +680,6 @@ def _find_columns(scans):
                 if len(run.list_recordings()) == 0:
                     lg.warning(f&#39;No recordings for {subj.codes}/{run.task_name}&#39;)
                     continue
-
-                if progress is not None:
-                    progress.setValue(i)
-                    i += 1
-                    progress.setLabelText(f&#39;Exporting &#34;{subj.codes}&#34; / &#34;{sess.name}&#34; / &#34;{run.task_name}&#34;&#39;)
-                    QGuiApplication.processEvents()
-
-                    if progress.wasCanceled():
-                        return
 
                 acquisition = get_bids_acquisition(run)
                 bids_name[&#39;run&#39;] = f&#39;run-{run_count[run.task_name]}&#39;

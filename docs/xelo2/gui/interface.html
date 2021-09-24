@@ -120,7 +120,7 @@ class Interface(QMainWindow):
     test = False
     unsaved_changes = False
 
-    def __init__(self, db_name=None, username=None, password=None):
+    def __init__(self, db_name=None, username=None, password=None, hostname=&#39;localhost&#39;):
 
         super().__init__()
         create_menubar(self)
@@ -327,12 +327,12 @@ class Interface(QMainWindow):
                 self.sql_access(**DB_ARGS)
 
         else:
-            self.sql_access(db_name, username, password)
+            self.sql_access(db_name, username, password, hostname=hostname)
 
-    def sql_access(self, db_name=None, username=None, password=None):
+    def sql_access(self, db_name=None, username=None, password=None, hostname=None):
         &#34;&#34;&#34;This is where you access the database
         &#34;&#34;&#34;
-        self.db = access_database(db_name, username, password)
+        self.db = access_database(db_name, username, hostname, password)
         self.db[&#39;db&#39;].transaction()
 
         self.events_model = EventsModel(self.db)
@@ -1004,17 +1004,25 @@ class Interface(QMainWindow):
             subset[&#39;sessions&#39;].append(query.value(1))
             subset[&#39;runs&#39;].append(query.value(2))
 
-        data_path = QFileDialog.getExistingDirectory()
+        data_path = QFileDialog.getSaveFileName(
+            self,
+            &#34;Choose directory where to save the recordings in BIDS format&#34;,
+            &#39;bids_output&#39;,
+            &#39;Folder (*)&#39;,
+            )[0]
         if data_path == &#39;&#39;:
             return
 
-        progress = QProgressDialog(&#39;&#39;, &#39;Cancel&#39;, 0, len(subset[&#39;runs&#39;]), self)
-        progress.setWindowTitle(&#39;Converting to BIDS&#39;)
-        progress.setMinimumDuration(0)
-        progress.setWindowModality(Qt.WindowModal)
+        data_path = Path(data_path).resolve()
+        if data_path.exists():
+            QMessageBox.warning(
+                self,
+                &#39;Folder exists&#39;,
+                &#39;This folder already exists. Make sure you choose a folder name that does not exist&#39;,
+                )
+            return
 
-        create_bids(self.db, Path(data_path), deface=False, subset=subset, progress=progress)
-        progress.setValue(len(subset[&#39;runs&#39;]))
+        create_bids(self.db, data_path, deface=False, subset=subset)
 
     def new_item(self, checked=None, level=None):
 
@@ -1853,7 +1861,7 @@ def _fake_names(X):
 <dl>
 <dt id="xelo2.gui.interface.Interface"><code class="flex name class">
 <span>class <span class="ident">Interface</span></span>
-<span>(</span><span>db_name=None, username=None, password=None)</span>
+<span>(</span><span>db_name=None, username=None, password=None, hostname='localhost')</span>
 </code></dt>
 <dd>
 <div class="desc"><p>TODO: disable everything until you load database</p></div>
@@ -1867,7 +1875,7 @@ def _fake_names(X):
     test = False
     unsaved_changes = False
 
-    def __init__(self, db_name=None, username=None, password=None):
+    def __init__(self, db_name=None, username=None, password=None, hostname=&#39;localhost&#39;):
 
         super().__init__()
         create_menubar(self)
@@ -2074,12 +2082,12 @@ def _fake_names(X):
                 self.sql_access(**DB_ARGS)
 
         else:
-            self.sql_access(db_name, username, password)
+            self.sql_access(db_name, username, password, hostname=hostname)
 
-    def sql_access(self, db_name=None, username=None, password=None):
+    def sql_access(self, db_name=None, username=None, password=None, hostname=None):
         &#34;&#34;&#34;This is where you access the database
         &#34;&#34;&#34;
-        self.db = access_database(db_name, username, password)
+        self.db = access_database(db_name, username, hostname, password)
         self.db[&#39;db&#39;].transaction()
 
         self.events_model = EventsModel(self.db)
@@ -2751,17 +2759,25 @@ def _fake_names(X):
             subset[&#39;sessions&#39;].append(query.value(1))
             subset[&#39;runs&#39;].append(query.value(2))
 
-        data_path = QFileDialog.getExistingDirectory()
+        data_path = QFileDialog.getSaveFileName(
+            self,
+            &#34;Choose directory where to save the recordings in BIDS format&#34;,
+            &#39;bids_output&#39;,
+            &#39;Folder (*)&#39;,
+            )[0]
         if data_path == &#39;&#39;:
             return
 
-        progress = QProgressDialog(&#39;&#39;, &#39;Cancel&#39;, 0, len(subset[&#39;runs&#39;]), self)
-        progress.setWindowTitle(&#39;Converting to BIDS&#39;)
-        progress.setMinimumDuration(0)
-        progress.setWindowModality(Qt.WindowModal)
+        data_path = Path(data_path).resolve()
+        if data_path.exists():
+            QMessageBox.warning(
+                self,
+                &#39;Folder exists&#39;,
+                &#39;This folder already exists. Make sure you choose a folder name that does not exist&#39;,
+                )
+            return
 
-        create_bids(self.db, Path(data_path), deface=False, subset=subset, progress=progress)
-        progress.setValue(len(subset[&#39;runs&#39;]))
+        create_bids(self.db, data_path, deface=False, subset=subset)
 
     def new_item(self, checked=None, level=None):
 
@@ -3436,17 +3452,25 @@ def _fake_names(X):
         subset[&#39;sessions&#39;].append(query.value(1))
         subset[&#39;runs&#39;].append(query.value(2))
 
-    data_path = QFileDialog.getExistingDirectory()
+    data_path = QFileDialog.getSaveFileName(
+        self,
+        &#34;Choose directory where to save the recordings in BIDS format&#34;,
+        &#39;bids_output&#39;,
+        &#39;Folder (*)&#39;,
+        )[0]
     if data_path == &#39;&#39;:
         return
 
-    progress = QProgressDialog(&#39;&#39;, &#39;Cancel&#39;, 0, len(subset[&#39;runs&#39;]), self)
-    progress.setWindowTitle(&#39;Converting to BIDS&#39;)
-    progress.setMinimumDuration(0)
-    progress.setWindowModality(Qt.WindowModal)
+    data_path = Path(data_path).resolve()
+    if data_path.exists():
+        QMessageBox.warning(
+            self,
+            &#39;Folder exists&#39;,
+            &#39;This folder already exists. Make sure you choose a folder name that does not exist&#39;,
+            )
+        return
 
-    create_bids(self.db, Path(data_path), deface=False, subset=subset, progress=progress)
-    progress.setValue(len(subset[&#39;runs&#39;]))</code></pre>
+    create_bids(self.db, data_path, deface=False, subset=subset)</code></pre>
 </details>
 </dd>
 <dt id="xelo2.gui.interface.Interface.edit_electrode_data"><code class="name flex">
@@ -4527,7 +4551,7 @@ def show_channels_electrodes(self, current=None, previous=None, item=None):
 </details>
 </dd>
 <dt id="xelo2.gui.interface.Interface.sql_access"><code class="name flex">
-<span>def <span class="ident">sql_access</span></span>(<span>self, db_name=None, username=None, password=None)</span>
+<span>def <span class="ident">sql_access</span></span>(<span>self, db_name=None, username=None, password=None, hostname=None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>This is where you access the database</p></div>
@@ -4535,10 +4559,10 @@ def show_channels_electrodes(self, current=None, previous=None, item=None):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def sql_access(self, db_name=None, username=None, password=None):
+<pre><code class="python">def sql_access(self, db_name=None, username=None, password=None, hostname=None):
     &#34;&#34;&#34;This is where you access the database
     &#34;&#34;&#34;
-    self.db = access_database(db_name, username, password)
+    self.db = access_database(db_name, username, hostname, password)
     self.db[&#39;db&#39;].transaction()
 
     self.events_model = EventsModel(self.db)

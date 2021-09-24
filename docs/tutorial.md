@@ -1,7 +1,7 @@
 # TUTORIAL
 
 ## Create MySQL database
-First create a database as root/admin (`mysql -u root -p`):
+First create a database (f.e. `test`) as root/admin (`mysql -u root -p`):
 
 ```SQL
 CREATE DATABASE test;
@@ -17,6 +17,16 @@ cat allowed_values.sql subjects.sql protocols.sql sessions.sql runs.sql channels
 mysql -u giovanni -p test' < full.sql
 ```
 
+## Connect to the database
+To connect to the database, you need to specify the `DATABASE_NAME`, the MySQL `USERNAME` and the MySQL `PASSWORD`.
+
+```python
+from xelo2.database import access_database
+db = access_database(DATABASE_NAME, USERNAME)
+```
+
+You'll be prompted for the password.
+
 ## Open the connection to the MySQL server
 
 If the MySQL database is not stored in the local machine, you need to forward the local port of the remote database:
@@ -25,12 +35,11 @@ If the MySQL database is not stored in the local machine, you need to forward th
 ssh -L 3306:localhost:3306 -o ServerAliveInterval=240 user@remote
 ```
 
-## Connect to the database
-To connect to the database (in localhost), you need to specify the `DATABASE_NAME`, the MySQL `USERNAME` and the MySQL `PASSWORD`.
+Another option (if allowed by the mysql server) is to add the host (`HOSTNAME`) to the command:
 
 ```python
 from xelo2.database import access_database
-db = access_database(DATABASE_NAME, USERNAME, PASSWORD)
+db = access_database(DATABASE_NAME, USERNAME, HOSTNAME)
 ```
 
 ## Look up MRI files for one subject
