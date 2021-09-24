@@ -4,7 +4,7 @@ setup(
     name='xelo2',
     version='0.2',
     description='Database GUI',
-    url='https://github.com/gpiantoni/xelo2',
+    url='https://github.com/umcu-ribs/xelo2',
     author="Gio Piantoni",
     author_email='xelo2@gpiantoni.com',
     license='GPLv3',
