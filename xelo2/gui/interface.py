@@ -66,7 +66,7 @@ from ..io.electrodes import import_electrodes
 from ..io.events import read_events_from_ephys
 from ..io.tsv import load_tsv, save_tsv
 
-from .utils import _protocol_name, _name, _session_name
+from .utils import _protocol_name, _name, _session_name, guess_modality
 from .actions import create_menubar, Search, create_shortcuts
 from .models import FilesWidget, EventsModel
 from .modal import (
@@ -1038,12 +1038,21 @@ class Interface(QMainWindow):
         elif level == 'recordings':
             current_run = self.current('runs')
 
+            modalities = lookup_allowed_values(self.db['db'], 'recordings', 'modality')
+            guess = guess_modality(current_run)
+
+            if guess is None or guess not in modalities:
+                idx = 0
+            else:
+                idx = modalities.index(guess)
+
             text, ok = QInputDialog.getItem(
                 self,
                 f'Add New Recording for {current_run.task_name}',
                 'Modality:',
-                lookup_allowed_values(self.db['db'], 'recordings', 'modality'),
-                0, False)
+                modalities,
+                idx,
+                False)
 
         elif level in ('channels', 'electrodes'):
             current_recording = self.current('recordings')

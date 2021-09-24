@@ -92,7 +92,7 @@ from ..io.electrodes import import_electrodes
 from ..io.events import read_events_from_ephys
 from ..io.tsv import load_tsv, save_tsv
 
-from .utils import _protocol_name, _name, _session_name
+from .utils import _protocol_name, _name, _session_name, guess_modality
 from .actions import create_menubar, Search, create_shortcuts
 from .models import FilesWidget, EventsModel
 from .modal import (
@@ -1064,12 +1064,21 @@ class Interface(QMainWindow):
         elif level == &#39;recordings&#39;:
             current_run = self.current(&#39;runs&#39;)
 
+            modalities = lookup_allowed_values(self.db[&#39;db&#39;], &#39;recordings&#39;, &#39;modality&#39;)
+            guess = guess_modality(current_run)
+
+            if guess is None or guess not in modalities:
+                idx = 0
+            else:
+                idx = modalities.index(guess)
+
             text, ok = QInputDialog.getItem(
                 self,
                 f&#39;Add New Recording for {current_run.task_name}&#39;,
                 &#39;Modality:&#39;,
-                lookup_allowed_values(self.db[&#39;db&#39;], &#39;recordings&#39;, &#39;modality&#39;),
-                0, False)
+                modalities,
+                idx,
+                False)
 
         elif level in (&#39;channels&#39;, &#39;electrodes&#39;):
             current_recording = self.current(&#39;recordings&#39;)
@@ -2819,12 +2828,21 @@ def _fake_names(X):
         elif level == &#39;recordings&#39;:
             current_run = self.current(&#39;runs&#39;)
 
+            modalities = lookup_allowed_values(self.db[&#39;db&#39;], &#39;recordings&#39;, &#39;modality&#39;)
+            guess = guess_modality(current_run)
+
+            if guess is None or guess not in modalities:
+                idx = 0
+            else:
+                idx = modalities.index(guess)
+
             text, ok = QInputDialog.getItem(
                 self,
                 f&#39;Add New Recording for {current_run.task_name}&#39;,
                 &#39;Modality:&#39;,
-                lookup_allowed_values(self.db[&#39;db&#39;], &#39;recordings&#39;, &#39;modality&#39;),
-                0, False)
+                modalities,
+                idx,
+                False)
 
         elif level in (&#39;channels&#39;, &#39;electrodes&#39;):
             current_recording = self.current(&#39;recordings&#39;)
@@ -4250,12 +4268,21 @@ code of the subject to select</p></div>
     elif level == &#39;recordings&#39;:
         current_run = self.current(&#39;runs&#39;)
 
+        modalities = lookup_allowed_values(self.db[&#39;db&#39;], &#39;recordings&#39;, &#39;modality&#39;)
+        guess = guess_modality(current_run)
+
+        if guess is None or guess not in modalities:
+            idx = 0
+        else:
+            idx = modalities.index(guess)
+
         text, ok = QInputDialog.getItem(
             self,
             f&#39;Add New Recording for {current_run.task_name}&#39;,
             &#39;Modality:&#39;,
-            lookup_allowed_values(self.db[&#39;db&#39;], &#39;recordings&#39;, &#39;modality&#39;),
-            0, False)
+            modalities,
+            idx,
+            False)
 
     elif level in (&#39;channels&#39;, &#39;electrodes&#39;):
         current_recording = self.current(&#39;recordings&#39;)

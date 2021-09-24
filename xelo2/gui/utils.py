@@ -24,3 +24,31 @@ def _session_name(sess):
     else:
         date_str = f'{sess.start_time:%d %b %Y}'
     return f'{extra}{sess.name} ({date_str})'
+
+
+def guess_modality(run):
+    task_name = run.task_name
+    if task_name in ('t1_anatomy_scan', 'MP2RAGE'):
+        return 'T1w'
+    if task_name == 't2_anatomy_scan':
+        return 'T2w'
+    if task_name == 't2star_anatomy_scan':
+        return 'T2star'
+    if task_name == 'pd_anatomy_scan':
+        return 'PD'
+    if task_name == 'ct_anatomy_scan':
+        return 'ct'
+    if task_name == 'flair_anatomy_scan':
+        return 'FLAIR'
+    if task_name == 'angiography_scan':
+        return 'angio'
+    if task_name == 'top_up':
+        return 'epi'
+    if task_name == 'DTI':
+        return 'dwi'
+
+    sess_name = run.session.name
+    if sess_name in ('IEMU', 'OR'):
+        return 'ieeg'
+    if sess_name == 'MRI':
+        return 'bold'

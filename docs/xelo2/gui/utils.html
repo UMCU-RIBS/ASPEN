@@ -49,7 +49,35 @@ def _session_name(sess):
         date_str = &#39;unknown date&#39;
     else:
         date_str = f&#39;{sess.start_time:%d %b %Y}&#39;
-    return f&#39;{extra}{sess.name} ({date_str})&#39;</code></pre>
+    return f&#39;{extra}{sess.name} ({date_str})&#39;
+
+
+def guess_modality(run):
+    task_name = run.task_name
+    if task_name in (&#39;t1_anatomy_scan&#39;, &#39;MP2RAGE&#39;):
+        return &#39;T1w&#39;
+    if task_name == &#39;t2_anatomy_scan&#39;:
+        return &#39;T2w&#39;
+    if task_name == &#39;t2star_anatomy_scan&#39;:
+        return &#39;T2star&#39;
+    if task_name == &#39;pd_anatomy_scan&#39;:
+        return &#39;PD&#39;
+    if task_name == &#39;ct_anatomy_scan&#39;:
+        return &#39;ct&#39;
+    if task_name == &#39;flair_anatomy_scan&#39;:
+        return &#39;FLAIR&#39;
+    if task_name == &#39;angiography_scan&#39;:
+        return &#39;angio&#39;
+    if task_name == &#39;top_up&#39;:
+        return &#39;epi&#39;
+    if task_name == &#39;DTI&#39;:
+        return &#39;dwi&#39;
+
+    sess_name = run.session.name
+    if sess_name in (&#39;IEMU&#39;, &#39;OR&#39;):
+        return &#39;ieeg&#39;
+    if sess_name == &#39;MRI&#39;:
+        return &#39;bold&#39;</code></pre>
 </details>
 </section>
 <section>
@@ -57,6 +85,46 @@ def _session_name(sess):
 <section>
 </section>
 <section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="xelo2.gui.utils.guess_modality"><code class="name flex">
+<span>def <span class="ident">guess_modality</span></span>(<span>run)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def guess_modality(run):
+    task_name = run.task_name
+    if task_name in (&#39;t1_anatomy_scan&#39;, &#39;MP2RAGE&#39;):
+        return &#39;T1w&#39;
+    if task_name == &#39;t2_anatomy_scan&#39;:
+        return &#39;T2w&#39;
+    if task_name == &#39;t2star_anatomy_scan&#39;:
+        return &#39;T2star&#39;
+    if task_name == &#39;pd_anatomy_scan&#39;:
+        return &#39;PD&#39;
+    if task_name == &#39;ct_anatomy_scan&#39;:
+        return &#39;ct&#39;
+    if task_name == &#39;flair_anatomy_scan&#39;:
+        return &#39;FLAIR&#39;
+    if task_name == &#39;angiography_scan&#39;:
+        return &#39;angio&#39;
+    if task_name == &#39;top_up&#39;:
+        return &#39;epi&#39;
+    if task_name == &#39;DTI&#39;:
+        return &#39;dwi&#39;
+
+    sess_name = run.session.name
+    if sess_name in (&#39;IEMU&#39;, &#39;OR&#39;):
+        return &#39;ieeg&#39;
+    if sess_name == &#39;MRI&#39;:
+        return &#39;bold&#39;</code></pre>
+</details>
+</dd>
+</dl>
 </section>
 <section>
 </section>
@@ -70,6 +138,11 @@ def _session_name(sess):
 <li><h3>Super-module</h3>
 <ul>
 <li><code><a title="xelo2.gui" href="index.html">xelo2.gui</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="xelo2.gui.utils.guess_modality" href="#xelo2.gui.utils.guess_modality">guess_modality</a></code></li>
 </ul>
 </li>
 </ul>
