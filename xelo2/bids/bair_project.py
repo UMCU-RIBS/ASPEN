@@ -215,3 +215,35 @@ def list_bair_ids(db, healthy_visual=True, subset=None, public=False):
     print(f'Total number of runs: {len(subset["runs"])}')
 
     return subset
+
+
+def remove_keylabel_from_bids(bids_dir, key_to_remove='acq'):
+    """remove some key-label from bids.
+
+    This is mostly useful when there are labels which are not relevant and
+    might be inconsistent across subjects.
+
+    Parameters
+    ----------
+    bids_dir : Path
+        path to bids root directory
+    key_to_remove : str
+        which key you want to remove (f.e, "acq")
+    """
+    TEXT_FILES = chain(
+        bids_dir.glob('**/*.tsv'),
+        bids_dir.glob('**/*.vhdr'),
+        bids_dir.glob('**/*.vmrk'),
+        bids_dir.glob('**/*.json'),
+        )
+
+    for tsv_file in TEXT_FILES:
+        with tsv_file.open() as f:
+            txt = f.read()
+        txt = sub(f'_{key_to_remove}-.*?_', '_', txt)
+        with tsv_file.open('w') as f:
+            f.write(txt)
+
+    for old_file in bids_dir.glob('**/*.*'):
+        new_name = sub(f'_{key_to_remove}-.*?_', '_', old_file.name)
+        old_file.rename(old_file.parent / new_name)

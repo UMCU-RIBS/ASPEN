@@ -240,7 +240,39 @@ def list_bair_ids(db, healthy_visual=True, subset=None, public=False):
 
     print(f&#39;Total number of runs: {len(subset[&#34;runs&#34;])}&#39;)
 
-    return subset</code></pre>
+    return subset
+
+
+def remove_keylabel_from_bids(bids_dir, key_to_remove=&#39;acq&#39;):
+    &#34;&#34;&#34;remove some key-label from bids.
+
+    This is mostly useful when there are labels which are not relevant and
+    might be inconsistent across subjects.
+
+    Parameters
+    ----------
+    bids_dir : Path
+        path to bids root directory
+    key_to_remove : str
+        which key you want to remove (f.e, &#34;acq&#34;)
+    &#34;&#34;&#34;
+    TEXT_FILES = chain(
+        bids_dir.glob(&#39;**/*.tsv&#39;),
+        bids_dir.glob(&#39;**/*.vhdr&#39;),
+        bids_dir.glob(&#39;**/*.vmrk&#39;),
+        bids_dir.glob(&#39;**/*.json&#39;),
+        )
+
+    for tsv_file in TEXT_FILES:
+        with tsv_file.open() as f:
+            txt = f.read()
+        txt = sub(f&#39;_{key_to_remove}-.*?_&#39;, &#39;_&#39;, txt)
+        with tsv_file.open(&#39;w&#39;) as f:
+            f.write(txt)
+
+    for old_file in bids_dir.glob(&#39;**/*.*&#39;):
+        new_name = sub(f&#39;_{key_to_remove}-.*?_&#39;, &#39;_&#39;, old_file.name)
+        old_file.rename(old_file.parent / new_name)</code></pre>
 </details>
 </section>
 <section>
@@ -454,6 +486,56 @@ subjects.</p>
     print(&#39;check if it&#34;s necessary to add electrodes here as well&#39;)</code></pre>
 </details>
 </dd>
+<dt id="xelo2.bids.bair_project.remove_keylabel_from_bids"><code class="name flex">
+<span>def <span class="ident">remove_keylabel_from_bids</span></span>(<span>bids_dir, key_to_remove='acq')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>remove some key-label from bids.</p>
+<p>This is mostly useful when there are labels which are not relevant and
+might be inconsistent across subjects.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>bids_dir</code></strong> :&ensp;<code>Path</code></dt>
+<dd>path to bids root directory</dd>
+<dt><strong><code>key_to_remove</code></strong> :&ensp;<code>str</code></dt>
+<dd>which key you want to remove (f.e, "acq")</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove_keylabel_from_bids(bids_dir, key_to_remove=&#39;acq&#39;):
+    &#34;&#34;&#34;remove some key-label from bids.
+
+    This is mostly useful when there are labels which are not relevant and
+    might be inconsistent across subjects.
+
+    Parameters
+    ----------
+    bids_dir : Path
+        path to bids root directory
+    key_to_remove : str
+        which key you want to remove (f.e, &#34;acq&#34;)
+    &#34;&#34;&#34;
+    TEXT_FILES = chain(
+        bids_dir.glob(&#39;**/*.tsv&#39;),
+        bids_dir.glob(&#39;**/*.vhdr&#39;),
+        bids_dir.glob(&#39;**/*.vmrk&#39;),
+        bids_dir.glob(&#39;**/*.json&#39;),
+        )
+
+    for tsv_file in TEXT_FILES:
+        with tsv_file.open() as f:
+            txt = f.read()
+        txt = sub(f&#39;_{key_to_remove}-.*?_&#39;, &#39;_&#39;, txt)
+        with tsv_file.open(&#39;w&#39;) as f:
+            f.write(txt)
+
+    for old_file in bids_dir.glob(&#39;**/*.*&#39;):
+        new_name = sub(f&#39;_{key_to_remove}-.*?_&#39;, &#39;_&#39;, old_file.name)
+        old_file.rename(old_file.parent / new_name)</code></pre>
+</details>
+</dd>
 </dl>
 </section>
 <section>
@@ -477,6 +559,7 @@ subjects.</p>
 <li><code><a title="xelo2.bids.bair_project.add_umcu_to_sub_ses" href="#xelo2.bids.bair_project.add_umcu_to_sub_ses">add_umcu_to_sub_ses</a></code></li>
 <li><code><a title="xelo2.bids.bair_project.list_bair_ids" href="#xelo2.bids.bair_project.list_bair_ids">list_bair_ids</a></code></li>
 <li><code><a title="xelo2.bids.bair_project.make_bair_compatible" href="#xelo2.bids.bair_project.make_bair_compatible">make_bair_compatible</a></code></li>
+<li><code><a title="xelo2.bids.bair_project.remove_keylabel_from_bids" href="#xelo2.bids.bair_project.remove_keylabel_from_bids">remove_keylabel_from_bids</a></code></li>
 </ul>
 </li>
 </ul>

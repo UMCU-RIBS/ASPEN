@@ -91,7 +91,7 @@ def convert_physio(rec, dest_path, name):
 
 def _write_physio(physio, physio_tsv):
 
-    content = physio.to_csv(sep=&#39;\t&#39;, index=False, header=False, float_format=&#39;%.3f&#39;)
+    content = physio.to_csv(sep=&#39;\t&#39;, index=False, header=False, float_format=&#39;%.6f&#39;)
     with gzip.open(physio_tsv, &#39;wb&#39;) as f:
         f.write(content.encode())</code></pre>
 </details>
