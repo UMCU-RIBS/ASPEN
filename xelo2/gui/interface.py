@@ -434,7 +434,11 @@ class Interface(QMainWindow):
             l.clear()
 
         for i, run in enumerate(sess.list_runs()):
-            item = QListWidgetItem_time(run, f'#{i + 1: 3d}: {run.task_name}')
+            # checking for multiClassScreening for different display of task name in the list
+            if run.task_name == "MultiClassScreening":
+                item = QListWidgetItem_time(run, f'#{i + 1: 3d}: MCS_{run.mcs_task_design}_{run.mcs_num_classes}_{run.mcs_paradigm}')
+            else:
+                item = QListWidgetItem_time(run, f'#{i + 1: 3d}: {run.task_name}')
             if run.id in self.search.runs:
                 highlight(item)
             self.lists['runs'].addItem(item)
@@ -1442,7 +1446,7 @@ def make_edit(value):
 
 def make_integer(value):
     w = QSpinBox()
-    w.setRange(-2e7, 2e7)
+    # w.setRange(-2e7, 2e7)
 
     if value is None:
         w.setValue(0)
