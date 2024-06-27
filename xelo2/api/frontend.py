@@ -534,4 +534,10 @@ def list_experimenters(db):
     while query.next():
         out.append(query.value('name'))
 
-    return out
+    # XEL-69 only return active experimenters without deleting the list
+    set_all_experimenters = set(out)
+    set_active_experimenters = {'Anouck', 'Simon', 'Erik', 'Mariana', 'Julia'}
+    get_active_from_all = set_all_experimenters & set_active_experimenters
+    active_experimenters_list = list(get_active_from_all)
+
+    return active_experimenters_list
