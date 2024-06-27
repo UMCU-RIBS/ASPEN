@@ -5,3 +5,9 @@ tests/data/
 
 .coverage
 htmlcov/
+
+#Pycharm
+*.idea
+*__pycache__
+
+xelo2.egg-info/*
