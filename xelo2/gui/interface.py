@@ -1032,7 +1032,7 @@ class Interface(QMainWindow):
                 self,
                 f'Add New Run for {current_session.name}',
                 'Task Name:',
-                lookup_allowed_values(self.db['db'], 'runs', 'task_name'),
+                sorted(lookup_allowed_values(self.db['db'], 'runs', 'task_name')),  # XEL-61 sorted view of tasks list
                 0, False)
 
         elif level == 'recordings':
