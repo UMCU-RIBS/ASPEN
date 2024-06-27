@@ -17,7 +17,9 @@ def show_summary(parent):
 
 
 class Summary(QDialog):
-
+    """
+    This class populates a form layout when within the UI 'information' is pressed (database -> information)
+    """
     def __init__(self, parent):
         super().__init__(parent)
 
@@ -34,10 +36,17 @@ class Summary(QDialog):
             _info(parent.db, """
                 SELECT COUNT(id) FROM subjects
                 WHERE subjects.id in (SELECT subject_id FROM sessions WHERE sessions.name = 'IEMU')
-                AND subjects.id in (SELECT subject_id FROM sessions WHERE sessions.name = 'MRI')"""))
+                AND subjects.id in (SELECT subject_id FROM sessions WHERE sessions.name = 'MRI')"""))  # TODO add BCI here !
         lay.addRow(
             '# IEMU sessions',
             _info(parent.db, 'SELECT COUNT(DISTINCT sessions.id) FROM sessions WHERE name = "IEMU"'))
+
+
+        # this part is required for the new table sessions_bci
+        lay.addRow(
+            '# BCI sessions',
+            _info(parent.db, 'SELECT COUNT(DISTINCT sessions.id) FROM sessions WHERE name = "BCI"'))
+
         for chan_elec in ('channel', 'electrode'):
             lay.addRow(
                 f'# IEMU sessions with {chan_elec}s',
