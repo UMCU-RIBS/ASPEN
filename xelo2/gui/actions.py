@@ -41,6 +41,9 @@ def create_menubar(main):
     main.subjsort.setCheckable(True)
     main.subjsort.triggered.connect(main.list_subjects)
     menu_view.addAction(main.subjsort)
+    # Due to requests based on User feedback, we like to start with A-Z, a-z sorted subjects. XEL-62, even though
+    # the database includes actions for sorting the subject views, it is often missed by the user.
+    main.subjsort.setChecked(True)
 
     menu_view.addSeparator()
 
