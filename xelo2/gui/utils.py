@@ -14,13 +14,17 @@ def _name(name):
     else:
         return name
 
+
 def _session_name(sess):
     extra = ''
     if sess.name == 'MRI':
         extra = f'{sess.MagneticFieldStrength} '
 
-    if sess.start_time is None:
+    # XEL-57 bci patients should use data of creation instead of start_time
+    if sess.start_time is None and sess.name != 'BCI':
         date_str = 'unknown date'
+    elif sess.name == 'BCI':
+        date_str = f'{sess.data_created: %d %b %Y}'
     else:
         date_str = f'{sess.start_time:%d %b %Y}'
     return f'{extra}{sess.name} ({date_str})'
