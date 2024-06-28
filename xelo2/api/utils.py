@@ -120,6 +120,14 @@ def sort_starttime(obj):
         return obj.start_time
 
 
+# XEL-60 in addition for bci-sessions to be sorted on data-created field
+def sort_data_created(obj):
+    if obj.data_created is None:
+        return datetime(1900, 1, 1, 0, 0, 0)
+    else:
+        return obj.data_created
+
+
 def out_date(driver, out):
     if driver == 'QSQLITE':
         if out == '':

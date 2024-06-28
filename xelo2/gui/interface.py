@@ -66,7 +66,7 @@ from ..io.electrodes import import_electrodes
 from ..io.events import read_events_from_ephys
 from ..io.tsv import load_tsv, save_tsv
 
-from .utils import _protocol_name, _name, _session_name, guess_modality
+from .utils import _protocol_name, _name, _session_name, guess_modality, _sort_session_bci
 from .actions import create_menubar, Search, create_shortcuts
 from .models import FilesWidget, EventsModel
 from .modal import (
@@ -410,8 +410,20 @@ class Interface(QMainWindow):
                 continue
             l.clear()
 
-        for sess in subj.list_sessions():
-            item = QListWidgetItem_time(sess, _session_name(sess))
+        # XEL-60 We need to sort BCI sessions differently
+        subject_list = subj.list_sessions()
+        bci_list = []
+        for session in subject_list:
+            if session.name == 'BCI':
+                bci_list.append(session)
+
+        subject_list = [subject for subject in subject_list if subject not in bci_list]  # filter to contain non-bci
+        bci_list = _sort_session_bci(bci_list)
+        subject_list.extend(bci_list)  # add bci entries at end of list so sort goes non-bci -> bci in view
+
+        # XEL-60 adding a display of session number on the session list view
+        for index, sess in enumerate(subject_list):  # XEL-60 index
+            item = QListWidgetItem_time(sess, f"# {index+1}  {_session_name(sess)}")  # XEL-60 adding index to view
             if sess.id in self.search.sessions:
                 highlight(item)
             self.lists['sessions'].addItem(item)

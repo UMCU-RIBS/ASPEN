@@ -1,3 +1,6 @@
+from xelo2.api.utils import sort_data_created
+
+
 def _protocol_name(protocol):
     if protocol.metc == 'Request from clinic':
         return 'Request from clinic'
@@ -28,6 +31,12 @@ def _session_name(sess):
     else:
         date_str = f'{sess.start_time:%d %b %Y}'
     return f'{extra}{sess.name} ({date_str})'
+
+
+# XEL-60 need a util function for sorting BCI sessions as they tend not to utilize start_time but data_created
+def _sort_session_bci(bci_sessions: list) -> list:
+    """Return a sorted list based on db.session_bci.data_created timestamp."""
+    return sorted(bci_sessions, key=sort_data_created)
 
 
 def guess_modality(run):
