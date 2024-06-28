@@ -80,6 +80,29 @@ from .modal import (
     parse_accessdatabase,
     )
 
+# XEL-71
+INACTIVE_TASKS = ['abled','action_selection', 'animal', 'audcomsent', 'audcomword', 'auditory_attention', 'bargrasp',
+                  'bci_cursor_control_attent', 'bci_cursor_control_motor', 'bci_cursor_control_taal',
+                  'bci_cursor_control_wm', 'bci_cursor_control_visual', 'boldhand', 'boldsat', 'checkerboard',
+                  'clickaway', 'deleted', 'divatt', 'eccentricity_mapping', 'emotion', 'eye_task', 'eyes_open_close',
+                  'faces_houses', 'facial_expressions', 'movi', 'feedback_wm', 'flip', 'gestures', 'music',
+                  'grootmoeder', 'instant_aud_recall', 'knottask', 'language', 'line_bisection', 'mario',
+                  'mental_rotation', 'mooney', 'motionmapper', 'polar_mapping', 'portem', 'pulse', 'sweeptone',
+                  'reading_task', 'switchspeed', 'retinotopic_map', 'rotating_sphere', 'rotmotion', 'saccade',
+                  'sendkeys', 'threshold', 'touchy', 'smartbrain', 'soc_patterns', 'vardy_beeps', 'sternberg',
+                  'movieben', 'verb_it', 'natural_rest', 'notask', 'noun', 'number', 'numerosity',
+                  'phonemes_and_jipjanneke', 'phonemes', 'vowels', 'visual_field_map', 'visual_left_right_map',
+                  'visual_speed_task', 'visual_task_serge', 'visual_attention', 'visual_field_map', 'visual_up_down_map'
+                  ]
+
+# XEL-71
+NO_MANAGER_TASKS = ['bair_hrfpattern', 'anatomie', 'angio', 'bair_prf', 'bair_spatialobject', 'bair_spatialpattern',
+                    'bair_temporalpattern', 'balltalk', 'calc', 'count', 'motor', 'picnam', 'verb']
+
+# XEL-71 one list to filter them all
+FILTER_TASKS = INACTIVE_TASKS
+FILTER_TASKS.extend(NO_MANAGER_TASKS)
+
 
 EXTRA_LEVELS = ['channels', 'electrodes']
 NULL_TEXT = 'Unknown / Unspecified'
@@ -1040,11 +1063,17 @@ class Interface(QMainWindow):
         elif level == 'runs':
             current_session = self.current('sessions')
 
+            # XEL-61 sorted view of tasks list
+            runs_list = sorted(lookup_allowed_values(self.db['db'], 'runs', 'task_name'))
+
+            # XEL-71 Without deleting earlier tasks, we filter the list the user gets to see, check top of file for list
+            runs_list = [task for task in runs_list if task not in FILTER_TASKS]
+
             text, ok = QInputDialog.getItem(
                 self,
                 f'Add New Run for {current_session.name}',
                 'Task Name:',
-                sorted(lookup_allowed_values(self.db['db'], 'runs', 'task_name')),  # XEL-61 sorted view of tasks list
+                runs_list,
                 0, False)
 
         elif level == 'recordings':
