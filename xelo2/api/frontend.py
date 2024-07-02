@@ -536,7 +536,7 @@ def list_experimenters(db):
 
     # XEL-69 only return active experimenters without deleting the list
     set_all_experimenters = set(out)
-    set_active_experimenters = {'Anouck', 'Simon', 'Erik', 'Mariana', 'Julia'}
+    set_active_experimenters = {'Anouck', 'Simon', 'Erik', 'Sifra', 'Malinda', 'Hugo'}
     get_active_from_all = set_all_experimenters & set_active_experimenters
     active_experimenters_list = list(get_active_from_all)
 
