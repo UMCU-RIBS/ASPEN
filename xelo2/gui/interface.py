@@ -81,7 +81,8 @@ from .modal import (
     )
 
 # XEL-71
-INACTIVE_TASKS = ['abled','action_selection', 'animal', 'audcomsent', 'audcomword', 'auditory_attention', 'bargrasp',
+INACTIVE_TASKS = ['abled', 'action_selection', 'animal', 'angiography_scan', 'audcomsent', 'audcomword',
+                  'auditory_attention', 'bargrasp', 'auditory_localizer', 'bair_finger_mapping',
                   'bci_cursor_control_attent', 'bci_cursor_control_motor', 'bci_cursor_control_taal',
                   'bci_cursor_control_wm', 'bci_cursor_control_visual', 'boldhand', 'boldsat', 'checkerboard',
                   'clickaway', 'deleted', 'divatt', 'eccentricity_mapping', 'emotion', 'eye_task', 'eyes_open_close',
@@ -90,18 +91,27 @@ INACTIVE_TASKS = ['abled','action_selection', 'animal', 'audcomsent', 'audcomwor
                   'mental_rotation', 'mooney', 'motionmapper', 'polar_mapping', 'portem', 'pulse', 'sweeptone',
                   'reading_task', 'switchspeed', 'retinotopic_map', 'rotating_sphere', 'rotmotion', 'saccade',
                   'sendkeys', 'threshold', 'touchy', 'smartbrain', 'soc_patterns', 'vardy_beeps', 'sternberg',
-                  'movieben', 'verb_it', 'natural_rest', 'notask', 'noun', 'number', 'numerosity',
+                  'movieben', 'verb_it', 'natural_rest', 'notask', 'noun', 'number', 'numerosity', 'noun'
                   'phonemes_and_jipjanneke', 'phonemes', 'vowels', 'visual_field_map', 'visual_left_right_map',
-                  'visual_speed_task', 'visual_task_serge', 'visual_attention', 'visual_field_map', 'visual_up_down_map'
+                  'visual_speed_task', 'visual_task_serge', 'visual_attention', 'frontal_eye_field'
+                  'visual_field_map', 'visual_up_down_map', 'ct_anatomy_scan', 'faces_emotion', 'flair_anatomy_scan'
                   ]
 
 # XEL-71
 NO_MANAGER_TASKS = ['bair_hrfpattern', 'anatomie', 'angio', 'bair_prf', 'bair_spatialobject', 'bair_spatialpattern',
-                    'bair_temporalpattern', 'balltalk', 'calc', 'count', 'motor', 'picnam', 'verb']
+                    'bair_temporalpattern', 'balltalk', 'calc', 'count', 'motor', 'picnam', 'verb', 'mouth_movements']
+
+# ASP-71
+UNKNOWN_TASKS = ['instant_aud_recall', 'mental_rotation', 'move_imagine_rest', 'move_three_conditions', 'MP2RAGE',
+                 'NOTE', 'pd_anatomy_scan', 'pRF_alessio', 'reference_scan', 'retinotopic_map', 'rotating_sphere',
+                 'single_words', 'sixcatlocisidiff', 'sixcatloctemporal', 'vardy_beeps', 'vts_prf',
+                 'vts_temporalpattern', 'balltlk', 'flipballistic', 'flipintegration', 'fliprelaxperturb',
+                 'flipbaseline']
 
 # XEL-71 one list to filter them all
 FILTER_TASKS = INACTIVE_TASKS
 FILTER_TASKS.extend(NO_MANAGER_TASKS)
+FILTER_TASKS.extend(UNKNOWN_TASKS)
 
 
 EXTRA_LEVELS = ['channels', 'electrodes']
@@ -1063,8 +1073,8 @@ class Interface(QMainWindow):
         elif level == 'runs':
             current_session = self.current('sessions')
 
-            # XEL-61 sorted view of tasks list
-            runs_list = sorted(lookup_allowed_values(self.db['db'], 'runs', 'task_name'))
+            # XEL-61 sorted view of tasks list # ASP-71 case-insensitive sorting
+            runs_list = sorted(lookup_allowed_values(self.db['db'], 'runs', 'task_name'), key=str.casefold)
 
             # XEL-71 Without deleting earlier tasks, we filter the list the user gets to see, check top of file for list
             runs_list = [task for task in runs_list if task not in FILTER_TASKS]
