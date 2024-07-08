@@ -392,7 +392,8 @@ class Interface(QMainWindow):
                 'reverse': True,
                 }
         for subj in list_subjects(self.db, **args):
-            item = QListWidgetItem(str(subj))
+            # ASP-62 Request to display all patient names in lowercase.
+            item = QListWidgetItem(str(subj).lower())
             if subj.id in self.search.subjects:
                 highlight(item)
             item.setData(Qt.UserRole, subj)

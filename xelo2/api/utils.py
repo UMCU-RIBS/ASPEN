@@ -102,7 +102,7 @@ def get_dtypes(table):
 
 
 def sort_subjects_alphabetical(subj):
-    return str(subj)
+    return str(subj).lower()  # ASP-62 Subjects all lowercase requested
 
 
 def sort_subjects_date(subj):
