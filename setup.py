@@ -18,12 +18,13 @@ setup(
     keywords='database qt',
     packages=find_packages(),
     install_requires=[
-        'numpy',
-        'pandas',
-        'nibabel',
-        'wonambi',
-        'bidso',
-        ],
+        # 'numpy',
+        # 'pandas',
+        # 'nibabel',
+        # 'wonambi',
+        # 'bidso',
+        # 'PyQt5'
+    ],
     package_data={
         'xelo2': [
             'database/tables.json',
