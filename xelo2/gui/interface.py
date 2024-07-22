@@ -66,7 +66,8 @@ from ..io.electrodes import import_electrodes
 from ..io.events import read_events_from_ephys
 from ..io.tsv import load_tsv, save_tsv
 
-from .utils import _protocol_name, _name, _session_name, guess_modality, _sort_session_bci
+from .utils import _protocol_name, _name, _session_name, guess_modality, _sort_session_bci, _check_session_bci, \
+    _session_bci_hide_fields
 from .actions import create_menubar, Search, create_shortcuts
 from .models import FilesWidget, EventsModel
 from .modal import (
@@ -552,6 +553,9 @@ class Interface(QMainWindow):
         self.t_params.blockSignals(True)
         self.t_params.clearContents()
 
+        # ASP-64 Need to store the session, so we don't create a lookup request inside the dict loop
+        current_session_name = self.lists['sessions'].currentItem().data(Qt.UserRole).name
+
         all_params = []
         for k, v in self.lists.items():
             item = v.currentItem()
@@ -561,6 +565,10 @@ class Interface(QMainWindow):
 
             parameters = {}
             parameters.update(list_parameters(self, obj))
+
+            # ASP-64 Check if we are dealing with BCI-session and clear the parameters that shouldn't be displayed
+            if _check_session_bci(current_session_name):
+                _session_bci_hide_fields(parameters)
 
             if k == 'runs':
                 w = Popup_Experimenters(obj, self)
@@ -1536,6 +1544,7 @@ def make_combobox(value, possible_values):
     w.setCurrentText(value)
 
     return w
+
 
 def make_electrode_combobox(self, elec):
     subj = self.lists['subjects'].currentItem().data(Qt.UserRole)
