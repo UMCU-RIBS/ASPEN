@@ -39,6 +39,24 @@ def _sort_session_bci(bci_sessions: list) -> list:
     return sorted(bci_sessions, key=sort_data_created)
 
 
+# ASP-64
+def _check_session_bci(session_name) -> bool:
+    """Internal function to quickly check if we are dealing with a BCI session, returns true if bci else false."""
+    if session_name == 'BCI':
+        return True
+    else:
+        return False
+
+
+# ASP-64 Internal function to allow for removing a field from a dictionary
+def _session_bci_hide_fields(dict_params: dict):
+    """Function to mark which fields should be hidden when dealing with BCI sessions. Certain fields are not used by
+    the BCI sessions. Theses are fields shown on the parameters section of the interface."""
+    field = 'Xelo Stem'
+    if field in dict_params:
+        del dict_params[field]
+
+
 def guess_modality(run):
     task_name = run.task_name
     if task_name in ('t1_anatomy_scan', 'MP2RAGE'):
