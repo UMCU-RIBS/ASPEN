@@ -67,7 +67,7 @@ from ..io.events import read_events_from_ephys
 from ..io.tsv import load_tsv, save_tsv
 
 from .utils import _protocol_name, _name, _session_name, guess_modality, _sort_session_bci, _check_session_bci, \
-    _session_bci_hide_fields
+    _session_bci_hide_fields, _check_change_age
 from .actions import create_menubar, Search, create_shortcuts
 from .models import FilesWidget, EventsModel
 from .modal import (
@@ -565,6 +565,16 @@ class Interface(QMainWindow):
 
             parameters = {}
             parameters.update(list_parameters(self, obj))
+
+            # ASP-63 We need a small reference when checking parms to corresponding fields. When found connect slots.
+            if 'Age' in parameters:
+                _age = parameters['Age']
+            if 'Date of Birth' in parameters:
+                _dob = parameters['Date of Birth']
+                _dob.dateChanged.connect(lambda: _check_change_age(_dob, _start_time, _age))
+            if 'Start Time' in parameters:
+                _start_time = parameters['Start Time']
+                _start_time.dateChanged.connect(lambda: _check_change_age(_dob, _start_time, _age))
 
             # ASP-64 Check if we are dealing with BCI-session and clear the parameters that shouldn't be displayed
             if _check_session_bci(current_session_name):
