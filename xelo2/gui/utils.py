@@ -1,4 +1,6 @@
 from xelo2.api.utils import sort_data_created
+from PyQt5.QtCore import QDate
+from PyQt5.QtWidgets import QSpinBox
 
 
 def _protocol_name(protocol):
@@ -83,3 +85,30 @@ def guess_modality(run):
         return 'ieeg'
     if sess_name == 'MRI':
         return 'bold'
+
+
+# ASP-63 to allow for automatically calculating a subjects age
+def _calculate_age(date_of_birth: QDate, date_to_compare: QDate) -> int:
+    """Function to return an int that represents the age based on a date input. Naive approach."""
+    return date_to_compare.year() - date_of_birth.year() - ((date_to_compare.month(), date_to_compare.day()) <
+                                                            (date_of_birth.month(), date_of_birth.day()))
+
+
+# ASP-63 Added a util function to update a field-param value for further usages
+def _update_parm(value: int, target_widget: QSpinBox):
+    """Function to update value on a QLineEdit widget under the parameters. Value needs to be an int with how QSpinbox
+    is working.
+    :param value: Value in int as QSpinbox expects an int for setValue.
+    :param target_widget: target widget of type QSpinBox for which the change is intended."""
+    target_widget.setValue(value)
+
+
+# ASP-63 Slot function for dateChanged based on the "Date of Birth" parameter
+def _check_change_age(date_of_birth: QDate, start_time: QDate, target_widget: QSpinBox):
+    """Slot function that checks a d.o.b and what age the subject is based on start_time of a task, it will then update
+    the age field with this information.
+    :param date_of_birth: QDate value of subjects date of birth.
+    :param start_time: QDate value of subjects run start_time.
+    :param target_widget: QSpinbox widget of the subjects age parm."""
+    _update_parm(_calculate_age(date_of_birth.date(), start_time.date()), target_widget)
+
