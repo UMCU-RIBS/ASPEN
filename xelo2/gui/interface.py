@@ -62,7 +62,7 @@ from ..bids.utils import find_one_file
 from ..io.parrec import add_parrec
 from ..io.ephys import add_ephys_to_sess
 from ..io.channels import create_channels
-from ..io.electrodes import import_electrodes
+from ..io.electrodes import get_electrodes_array, check_array_file_empty, fill_names_if_empty
 from ..io.events import read_events_from_ephys
 from ..io.tsv import load_tsv, save_tsv
 
@@ -1391,37 +1391,78 @@ class Interface(QMainWindow):
         self.modified()
         self.list_recordings()
 
+    # ASP-83 temporarily disabled the original method to still keep a reference, can be removed after ASP-91.
+    # def io_electrodes(self):
+    #
+    #     mat_file = QFileDialog.getOpenFileName(
+    #         self,
+    #         "Open File",
+    #         None,
+    #         "Matlab (*.mat)")[0]
+    #
+    #     if mat_file == '':
+    #         return
+    #
+    #     rec = self.current('recordings')
+    #     # print(f" rec = {rec}")
+    #     chan = rec.channels
+    #     # print(f"_____chan = rec.channels {chan}")
+    #
+    #     chan_data = chan.data
+    #     # print(f"______++++++chan_data {chan_data}")
+    #     idx = isin(chan_data['type'], ('ECOG', 'SEEG'))
+    #     n_chan = idx.sum()
+    #     lg.warning(f'# of ECOG/SEEG channels for this recording: {n_chan}')
+    #
+    #     xyz = import_electrodes(mat_file, n_chan)
+    #     if xyz is None:
+    #         print('you need to do this manually')
+    #         return
+    #
+        # elec = Electrodes.add(self.db)
+        # elec_data = elec.empty(n_chan)
+    #     # elec_data = elec.empty(64)
+    #     elec_data['name'] = chan_data['name'][idx]
+    #     elec_data['x'] = xyz[:, 0]
+    #     elec_data['y'] = xyz[:, 1]
+    #     elec_data['z'] = xyz[:, 2]
+    #     elec.data = elec_data
+    #     rec.attach_electrodes(elec)
+    #
+    #     self.modified()
+    #     self.list_recordings()
+
+    # ASP-83 Created a 'new' method for io_electrodes to get a better understanding of why the import isn't working
     def io_electrodes(self):
+        """This method will look for a mat file and populate the 'Electrodes' view in the GUI. """
+        # File open handle to .mat file
+        mat_file = QFileDialog.getOpenFileName(self, "Open File", None, "Matlab | text (*.mat *.txt)")[0]
 
-        mat_file = QFileDialog.getOpenFileName(
-            self,
-            "Open File",
-            None,
-            "Matlab (*.mat)")[0]
+        # Let's output a simple user feedback if the file is empty
+        if check_array_file_empty(mat_file):
+            print("Something went wrong with the file you selected, it is empty. Check the file and path.")
 
-        if mat_file == '':
-            return
+        # Retrieve array in .mat file, it assumes gridloc_data to be in dict
+        matlab_array = get_electrodes_array(mat_file)
 
-        rec = self.current('recordings')
-        chan = rec.channels
-        chan_data = chan.data
-        idx = isin(chan_data['type'], ('ECOG', 'SEEG'))
-        n_chan = idx.sum()
-        lg.warning(f'# of ECOG/SEEG channels for this recording: {n_chan}')
+        # This grabs the relevant id to further insert it into the db
+        electrodes = Electrodes.add(self.db)
 
-        xyz = import_electrodes(mat_file, n_chan)
-        if xyz is None:
-            print('you need to do this manually')
-            return
+        # This creates a dict with the keys noted down in the table 'electrodes' -> name,x,y,z,size,material,etc.
+        elec_temp = electrodes.empty(len(matlab_array))
 
-        elec = Electrodes.add(self.db)
-        elec_data = elec.empty(n_chan)
-        elec_data['name'] = chan_data['name'][idx]
-        elec_data['x'] = xyz[:, 0]
-        elec_data['y'] = xyz[:, 1]
-        elec_data['z'] = xyz[:, 2]
-        elec.data = elec_data
-        rec.attach_electrodes(elec)
+        # Fills the empty dict we now have, with the data coming from the matlab array.
+        elec_temp['x'], elec_temp['y'], elec_temp['z'] = matlab_array[:, 0], matlab_array[:, 1], matlab_array[:, 2]
+
+        # If name key in dict is empty we fill it out with chan(x) idx for size of the dict
+        elec_temp = fill_names_if_empty(elec_temp)
+
+        # This tries to start the process of filling out the data into the db.
+        electrodes.data = elec_temp
+
+        # Seeing with how the database is configured we also need a handle to the recording table.
+        recording = self.current('recordings')
+        recording.attach_electrodes(electrodes)
 
         self.modified()
         self.list_recordings()

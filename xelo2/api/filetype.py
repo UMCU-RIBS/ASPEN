@@ -21,7 +21,7 @@ def parse_filetype(file_path):
     elif suffix == '.trc':
         data_type = 'micromed'
 
-    elif suffix in ('.nev', '.ns3', '.ns5', '.ns6'):
+    elif suffix in ('.nev', '.ns1', '.ns2', '.ns3', '.ns4', '.ns5', '.ns6', '.ns7', '.ns8', '.ns9'):
         data_type = 'blackrock'
 
     elif suffix == '.pdf':
