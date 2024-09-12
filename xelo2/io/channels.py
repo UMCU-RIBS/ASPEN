@@ -20,7 +20,7 @@ def create_channels_trc(db, trc_path):
     trc_chans = d.header['orig']['chans']
 
     chan = Channels.add(db)
-    channels = chan.empty(len(trc_chans))
+    channels = chan.empty(len(trc_chans))  # original tries to create empty numpy array
 
     labels = [ch['chan_name'] for ch in trc_chans]
     chan_types = [def_chan_type(label) for label in labels]
@@ -33,19 +33,27 @@ def create_channels_trc(db, trc_path):
     low_cutoff = array([ch['LowPass_Limit'] / 1000 for ch in trc_chans])
     low_cutoff[low_cutoff == 0] = nan
     channels['low_cutoff'] = low_cutoff
-    channels['reference'] = [ch['ground'] for ch in trc_chans]  # it's called ground but I'm pretty sure it's the reference
+    channels['reference'] = [ch['ground'] for ch in trc_chans]  # it's called ground but I'm pretty sure it's reference
     channels['groups'] = chan_groups
     channels['status'] = 'good'
-
     chan.data = channels
 
+    # Keeping these in code for further checks.
+    # chan.data = labels
+    # return [labels, chan_types]
     return chan
 
 
 def create_channels_blackrock(db, blackrock_path):
     if blackrock_path.suffix == '.nev':
-        blackrock_path = blackrock_path.with_suffix('.ns3')
-    d = Dataset(blackrock_path)
+        # ASP-91 Simple check to figure out if we need a .ns3 or .ns2, if we need a larger range of options use match.
+        try:
+            blackrock_path = blackrock_path.with_suffix('.ns3')
+            d = Dataset(blackrock_path)
+        except FileNotFoundError:
+            blackrock_path = blackrock_path.with_suffix('.ns2')
+            d = Dataset(blackrock_path)
+
     b_chans = d.header['orig']['ElectrodesInfo']
 
     chan = Channels.add(db)

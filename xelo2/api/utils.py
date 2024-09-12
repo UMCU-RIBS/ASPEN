@@ -97,7 +97,8 @@ def get_dtypes(table):
         elif v['type'] == 'double':
             dtypes.append((k, 'float'))
         else:
-            assert False
+            dtypes.append((k, 'int'))
+            # assert False
     return dtype(dtypes)
 
 
