@@ -1378,16 +1378,14 @@ class Interface(QMainWindow):
     def io_channels(self):
         recording = self.current('recordings')
 
+        # ASP-91 making slight modifications on how we get the path to the recording
         ephys_file = find_one_file(recording, ('blackrock', 'micromed', 'bci2000'))
-        if ephys_file is None:
-            return
 
         chan = create_channels(self.db, ephys_file.path)
         if chan is None:
             return
-        chan.name = '(imported)'
-        recording.attach_channels(chan)
 
+        recording.attach_channels(chan)
         self.modified()
         self.list_recordings()
 
