@@ -36,7 +36,6 @@ lg = getLogger(__name__)
 
 
 class NewFile(QDialog):
-
     def __init__(self, parent, file_obj=None, level_obj=None, filename=None):
         super().__init__(parent)
         self.setWindowModality(Qt.WindowModal)
@@ -72,6 +71,9 @@ class NewFile(QDialog):
 
         self.setLayout(layout)
 
+        # ASP-101 Create a simple list that contains the fileExtensions that are bound to a recording level.
+        self.file_extensions_recording: () = ('parrec', 'nifti', 'bci2000', 'micromed', 'blackrock', 'dicom')
+
         if file_obj is not None:
             # self.level.setCurrentText(file_obj)
             self.filepath.setText(str(file_obj.path))
@@ -96,6 +98,13 @@ class NewFile(QDialog):
 
         try:
             filetype = parse_filetype(filename)
+
+            # ASP-101 Set level to recording if any datatype is found in list (of recording filetypes).
+            if filetype in self.file_extensions_recording:
+                self.level.setCurrentText('Recording')
+            # ASP-101 Same for PDF, which is always protocol.
+            elif filetype == 'pdf':
+                self.level.setCurrentText('Protocol')
 
         except ValueError as err:
             lg.debug(err)
