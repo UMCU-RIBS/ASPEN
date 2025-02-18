@@ -1,6 +1,6 @@
 from xelo2.api.utils import sort_data_created
 from PyQt5.QtCore import QDate
-from PyQt5.QtWidgets import QSpinBox
+from PyQt5.QtWidgets import QSpinBox, QMessageBox
 
 
 def _protocol_name(protocol):
@@ -112,3 +112,16 @@ def _check_change_age(date_of_birth: QDate, start_time: QDate, target_widget: QS
     :param target_widget: QSpinbox widget of the subjects age parm."""
     _update_parm(_calculate_age(date_of_birth.date(), start_time.date()), target_widget)
 
+
+# ASP-102 Adding a reusable QMessageBox for warnings
+def _throw_msg_box(title: str, text: str, button_ok: bool = True) -> None:
+    """Reusable function for generating QMessageBox screens for the user. """
+    _msg = QMessageBox()
+    _msg.setIcon(QMessageBox.Warning)
+    _msg.setWindowTitle(title)
+    _msg.setText(text)
+    if button_ok:
+        _msg.setStandardButtons(QMessageBox.Ok)
+    else:
+        _msg.setStandardButtons(QMessageBox.Cancel)
+    _msg.exec()
