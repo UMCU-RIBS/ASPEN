@@ -100,7 +100,11 @@ def _update_parm(value: int, target_widget: QSpinBox):
     is working.
     :param value: Value in int as QSpinbox expects an int for setValue.
     :param target_widget: target widget of type QSpinBox for which the change is intended."""
-    target_widget.setValue(value)
+    target_widget.setMaximum(199)  # Small modification to set the maximum (age) to above 99
+    if value <= 0:
+        _throw_msg_box("Age incorrect", "Age is below 0, check DoB and Start Time under Parameters.")
+    if value > 0:
+        target_widget.setValue(value)
 
 
 # ASP-63 Slot function for dateChanged based on the "Date of Birth" parameter
