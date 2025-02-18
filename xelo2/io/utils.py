@@ -6,7 +6,14 @@ from pytz import timezone
 
 def localize_blackrock(path_to_file):
     if path_to_file.suffix == '.nev':  # ns3 has more information (f.e. n_samples when there are no triggers)
+
+        # ASP-92 load events are only checking .ns3 files, we have switched to .ns2, try .ns2 and then throw error
         path_to_file = path_to_file.with_suffix('.ns3')
+        if not path_to_file.exists():
+            print(" No .ns3 file found trying .ns2 ")
+            path_to_file = path_to_file.with_suffix('.ns2')
+            if not path_to_file.exists():
+                print(f"No ns3/ns2 file found in given directory, check if these files are present in :{path_to_file}")
 
     d = Dataset(path_to_file)
 
