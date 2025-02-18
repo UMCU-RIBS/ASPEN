@@ -1073,11 +1073,14 @@ class Interface(QMainWindow):
 
         elif level == 'sessions':
             current_subject = self.current('subjects')
+            # ASP-87 reverse so BCI is first as option
+            _allowed_values_sessions = lookup_allowed_values(self.db['db'], 'sessions', 'name')
+            _allowed_values_sessions.reverse()
             text, ok = QInputDialog.getItem(
                 self,
                 f'Add New Session for {current_subject}',
                 'Session Name:',
-                lookup_allowed_values(self.db['db'], 'sessions', 'name'),
+                _allowed_values_sessions,
                 0, False)
 
         elif level == 'protocols':
