@@ -67,7 +67,7 @@ from ..io.events import read_events_from_ephys
 from ..io.tsv import load_tsv, save_tsv
 
 from .utils import _protocol_name, _name, _session_name, guess_modality, _sort_session_bci, _check_session_bci, \
-    _session_bci_hide_fields, _check_change_age
+    _session_bci_hide_fields, _check_change_age, _throw_msg_box
 from .actions import create_menubar, Search, create_shortcuts
 from .models import FilesWidget, EventsModel
 from .modal import (
@@ -1205,10 +1205,14 @@ class Interface(QMainWindow):
             item = self.current(level)
             format = get_new_file.format.currentText()
             path = get_new_file.filepath.text()
-            item.add_file(format, path)
 
-            self.list_files()
-            self.modified()
+            # ASP-102 Providing a bit more information to the user if no recording can be found.
+            if item is None:
+                _throw_msg_box('Warning!', "Please add a Recording, before you add recording file(s).")
+            else:  # ASP-102 only add the file and list_files()/modified() if item is not None, prevent XCB error
+                item.add_file(format, path)
+                self.list_files()
+                self.modified()
 
     def edit_file(self, level_obj, file_obj):
         get_new_file = NewFile(self, file_obj, level_obj)
