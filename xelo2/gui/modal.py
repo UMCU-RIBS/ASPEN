@@ -72,7 +72,8 @@ class NewFile(QDialog):
         self.setLayout(layout)
 
         # ASP-101 Create a simple list that contains the fileExtensions that are bound to a recording level.
-        self.file_extensions_recording: () = ('parrec', 'nifti', 'bci2000', 'micromed', 'blackrock', 'dicom')
+        # ASP-82 Addition of wave to recordings
+        self.file_extensions_recording: () = ('parrec', 'nifti', 'bci2000', 'micromed', 'blackrock', 'dicom', 'wave')
 
         if file_obj is not None:
             # self.level.setCurrentText(file_obj)

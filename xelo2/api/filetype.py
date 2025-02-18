@@ -36,6 +36,10 @@ def parse_filetype(file_path):
     elif suffix == '':
         data_type = 'dicom'
 
+    # ASP-82 wave files were not built-in apparently
+    elif suffix == '.wav':
+        data_type = 'wave'
+
     else:
         raise ValueError(f'Unknown file suffix "{suffix}"')
 
