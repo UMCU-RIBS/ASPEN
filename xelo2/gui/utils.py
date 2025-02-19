@@ -1,6 +1,9 @@
+from PyQt5.QtCore import QDate, Qt
+from PyQt5.QtWidgets import QSpinBox, QMessageBox, QTableWidget
 from xelo2.api.utils import sort_data_created
-from PyQt5.QtCore import QDate
-from PyQt5.QtWidgets import QSpinBox, QMessageBox
+
+# for specified parameters we want to change the color of.
+PARAMETERS_COLOR_CHANGE = ["RunsParadigm", "RunsAlternative Name", "RunsNumber Classes", "RunsClasses"]
 
 
 def _protocol_name(protocol):
@@ -129,3 +132,22 @@ def _throw_msg_box(title: str, text: str, button_ok: bool = True) -> None:
     else:
         _msg.setStandardButtons(QMessageBox.Cancel)
     _msg.exec()
+
+
+# ASP-68 Adding a reusable post-table creation color indicator to the params widget
+def _update_visual_parameters_table(table: QTableWidget):
+    """ Function that takes the QTableWidget from interface.py and scans the table for predefined level+parameter
+    combinations for those that need a color change. This function is not optimized, but it only deals with a list of
+    roughly 60 items at the time of writing this function, so it should be fine. This function can be expanded to also
+    take into consideration different colors or enabling/disabling parameters.
+    row0 = level, row1=parameter, row2=value"""
+    for row in range(table.rowCount()):
+        if table.item(row, 0).text() + table.item(row, 1).text() in PARAMETERS_COLOR_CHANGE:
+            # Reference for color changes
+            # table.item(row, 0).setBackground(QColor("gray"))
+            # table.item(row, 1).setBackground(QColor("gray"))
+            # table.cellWidget(row, 2).setStyleSheet("background-color: gray;")
+
+            table.item(row, 0).setFlags(Qt.ItemIsSelectable)
+            table.item(row, 1).setFlags(Qt.ItemIsSelectable)
+            table.cellWidget(row, 2).setDisabled(True)
