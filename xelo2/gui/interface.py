@@ -67,7 +67,7 @@ from ..io.events import read_events_from_ephys
 from ..io.tsv import load_tsv, save_tsv
 
 from .utils import _protocol_name, _name, _session_name, guess_modality, _sort_session_bci, _check_session_bci, \
-    _session_bci_hide_fields, _check_change_age, _throw_msg_box
+    _session_bci_hide_fields, _check_change_age, _throw_msg_box, _update_visual_parameters_table
 from .actions import create_menubar, Search, create_shortcuts
 from .models import FilesWidget, EventsModel
 from .modal import (
@@ -640,6 +640,8 @@ class Interface(QMainWindow):
             item = QTableWidgetItem(str(val['value']))
             self.t_params.setCellWidget(i, 2, val['value'])
 
+        # ASP-68 Addition of dedicated function call to modify visuals of parameters
+        _update_visual_parameters_table(self.t_params)
         self.t_params.blockSignals(False)
 
     def combo_chanelec(self, i, widget):
