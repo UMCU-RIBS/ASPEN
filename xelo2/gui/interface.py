@@ -1138,10 +1138,14 @@ class Interface(QMainWindow):
                     'You should first select an "ieeg" / "eeg" / "meg" recording')
                 return
 
-            text, ok = QInputDialog.getText(
+            # ASP-74 Instead of free input text we like the user to select an option out of a pre-defined list.
+            text, ok = QInputDialog.getItem(
                 self,
                 f'Add new {level}',
-                'Name to identify this setup:',
+                '',  # Label
+                ["clinical-ECoG", "clinical_ECoG-SDE", "HD-ECoG", "sEEG", "clinical-HD-ECoG", "clinical-HD-ECoG-SDE"],
+                0,  # Current
+                False  # Editable
                 )
 
         if ok and text != '':
