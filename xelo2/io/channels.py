@@ -11,6 +11,9 @@ def create_channels(db, ephys_path):
         return create_channels_trc(db, ephys_path)
     elif ephys_path.suffix.lower() == '.nev' or ephys_path.suffix.startswith('.ns'):
         return create_channels_blackrock(db, ephys_path)
+    # ASP-91 Inclusion of channel import for bci2000 (and redwood)
+    elif ephys_path.suffix.lower() == '.dat':
+        return create_channels_bci2000(db, ephys_path)
     else:
         print(f'Cannot extract channel labels from {ephys_path}')
 
@@ -71,6 +74,27 @@ def create_channels_blackrock(db, blackrock_path):
 
     chan.data = channels
 
+    return chan
+
+
+# ASP-91 Dedicated channel function for BCI2000
+def create_channels_bci2000(db, bci2000_path):
+    """Bci2000 wasn't supported this will be the first attempt to allow for bci2000 to import channels from."""
+    # TODO get rid of the Wonambi dependency there is a link in ASP-112, move wonambi to local func.
+    d = Dataset(bci2000_path)
+    bci2000_chans = d.header['chan_name']
+
+    chan = Channels.add(db)
+    channels = chan.empty(len(bci2000_chans))  # original tries to create empty numpy array
+
+    channels['name'] = bci2000_chans
+    channels['type'] = ''
+    channels['units'] = ''
+    channels['high_cutoff'] = None
+    channels['low_cutoff'] = None
+    channels['groups'] = ''
+    channels['status'] = ''
+    chan.data = channels
     return chan
 
 
