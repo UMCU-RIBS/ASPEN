@@ -219,3 +219,15 @@ def recording_attach(db, group, recording_id, group_id=None):
 
     if not query.exec():
         raise ValueError(query.lastError().text())
+
+
+# ASP-107 Need to add a function that now also incorporates the 'based_on' field in the db for channels
+def recording_attach_channel(db, group, recording_id, group_id=None, file_path_to_datafile=None):
+    query = QSqlQuery(db['db'])
+    query.prepare(f"UPDATE recordings_ephys SET `{group}_group_id` = :group_id WHERE `recording_id` = :recording_id")
+    query.bindValue(':group_id', group_id)
+    query.bindValue(':recording_id', recording_id)
+    
+
+    if not query.exec():
+        raise ValueError(query.lastError().text())

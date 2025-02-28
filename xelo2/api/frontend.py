@@ -505,6 +505,19 @@ class Channels(NumpyTable):
 
         return cls(db, id)
 
+    @classmethod
+    def add_rec_file(cls, db, filepath_rec_file):
+        # ASP-107 required for allowing the based_on_file to be added
+        print(f"inside add_rec_file ={filepath_rec_file}")
+        query = QSqlQuery(db['db'])
+        query.prepare("INSERT INTO channel_groups (`based_on_file`) VALUES (:fp_rec_file) ")
+        query.bindValue(":fp_rec_file", filepath_rec_file)
+        if query.exec():
+            id = query.lastInsertId()
+        else:
+            raise SyntaxError(query.lastError().text())
+
+        return cls(db, id)
 
 class Electrodes(NumpyTable):
     t = 'electrode_group'  # for Table.__getattr__

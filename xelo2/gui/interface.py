@@ -66,10 +66,13 @@ from ..io.electrodes import get_electrodes_array, check_array_file_empty, fill_n
 from ..io.events import read_events_from_ephys
 from ..io.tsv import load_tsv, save_tsv
 
-from .utils import _protocol_name, _name, _session_name, guess_modality, _sort_session_bci, _check_session_bci, \
-    _session_bci_hide_fields, _check_change_age, _throw_msg_box, _update_visual_parameters_table
 from .actions import create_menubar, Search, create_shortcuts
 from .models import FilesWidget, EventsModel
+from .utils import (
+    _protocol_name, _name, _session_name, guess_modality, _sort_session_bci, _check_session_bci,
+    _session_bci_hide_fields, _check_change_age, _throw_msg_box, _update_visual_parameters_table,
+    _mark_channel_file_visual, get_fp_rec_file
+    )
 from .modal import (
     NewFile,
     EditElectrodes,
@@ -107,7 +110,7 @@ UNKNOWN_TASKS = ['instant_aud_recall', 'mental_rotation', 'move_imagine_rest', '
                  'NOTE', 'pd_anatomy_scan', 'pRF_alessio', 'reference_scan', 'retinotopic_map', 'rotating_sphere',
                  'single_words', 'sixcatlocisidiff', 'sixcatloctemporal', 'vardy_beeps', 'vts_prf',
                  'vts_temporalpattern', 'balltlk', 'flipballistic', 'flipintegration', 'fliprelaxperturb',
-                 'flipbaseline']
+                 'flipbaseline', 'presentation', 'palmtree', 'no_app']
 
 # XEL-71 one list to filter them all
 FILTER_TASKS = INACTIVE_TASKS
@@ -626,7 +629,7 @@ class Interface(QMainWindow):
                     'parameter': p_k,
                     'value': p_v,
                     })
-
+        self.all_current_params = all_params  # ASP-107 quick save of all the params
         self.t_params.setRowCount(len(all_params))
 
         for i, val in enumerate(all_params):
@@ -721,6 +724,10 @@ class Interface(QMainWindow):
             self.t_files.setItem(i, 2, item)
 
         self.t_files.blockSignals(False)
+        _mark_channel_file_visual(self.t_files,
+                                  self.current('sessions').list_channels(),
+                                  self.all_current_params,
+                                  self.lists['channels'])
 
     def changed(self, obj, column, x):
         if isinstance(x, QDate):
@@ -1172,7 +1179,9 @@ class Interface(QMainWindow):
 
             elif level in ('channels', 'electrodes'):
                 if level in 'channels':
-                    chan = Channels.add(self.db)
+                    # ASP-107 Need info on pathfile of the recordings
+                    _fp_rec = get_fp_rec_file(self.t_files)
+                    chan = Channels.add_rec_file(self.db, _fp_rec)
                     chan.name = text
                     current_recording.attach_channels(chan)
 
