@@ -1,10 +1,10 @@
-`xelo2` is pure python, so it can be installed on every platform if you have the correct dependencies.
+`ASPEN` is pure python, so it can be installed on every platform if you have the correct dependencies.
 Make sure if you have at least python 3.6 installed.
 Then you can install it, by typing:
 
 ```bash
-git clone https://github.com/umcu-ribs/xelo2.git
-pip3 install -e xelo2
+git clone https://github.com/umcu-ribs/aspen.git
+pip3 install -e aspen
 ```
 
 ## Dependencies
