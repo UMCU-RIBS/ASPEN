@@ -913,7 +913,8 @@ class Interface(QMainWindow):
         menu = QMenu(self)
         if item is None:
             action = QAction(f'Add {level}', self)
-            action.triggered.connect(lambda x: self.new_item(level=level))
+            # ASP-107 deprecating manually adding channel files
+            action.triggered.connect(lambda x: _throw_msg_box("Deprecated", "Use 'Import > channels from IEEG/EEG/MEG recording' option instead"))
             menu.addAction(action)
 
         else:
