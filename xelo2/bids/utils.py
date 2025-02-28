@@ -3,6 +3,7 @@ from logging import getLogger
 from PyQt5.QtSql import QSqlQuery
 from textwrap import dedent
 from ..api.utils import collect_columns
+from ..gui.utils import _throw_msg_box
 
 lg = getLogger(__name__)
 
@@ -109,7 +110,8 @@ def find_one_file(rec, formats):
         return None
 
     elif len(found) > 1:
-        lg.warning(f'Too many files {format_str} for {rec}')  # TODO
+        lg.warning(f'Too many files {format_str} for {rec}')
+        _throw_msg_box("Error!", f"Too many files {format_str} for {rec}. Please remove incorrect recording file(s).")
         return None
 
     file = found[0]
