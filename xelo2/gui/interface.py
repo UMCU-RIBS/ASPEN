@@ -2,7 +2,7 @@ from logging import getLogger
 from pathlib import Path
 from datetime import date, datetime
 from functools import partial
-from numpy import isin, array
+from numpy import array
 
 from PyQt5.QtWidgets import (
     QAbstractItemView,
@@ -134,6 +134,10 @@ class Interface(QMainWindow):
     def __init__(self, db_name=None, username=None, password=None, hostname='localhost'):
 
         super().__init__()
+        self.electrodes_model = None
+        self.channels_model = None
+        self.events_model = None
+        self.all_current_params = None
         create_menubar(self)
         create_shortcuts(self)
 
@@ -333,9 +337,9 @@ class Interface(QMainWindow):
         self.show()
 
         if db_name is None:
-            DB_ARGS = parse_accessdatabase(self)
-            if DB_ARGS is not None:
-                self.sql_access(**DB_ARGS)
+            db_args = parse_accessdatabase(self)
+            if db_args is not None:
+                self.sql_access(**db_args)
 
         else:
             self.sql_access(db_name, username, password, hostname=hostname)
@@ -414,7 +418,7 @@ class Interface(QMainWindow):
 
         self.list_channels_electrodes()
         if item is None:
-            # when clicking on a previously selected list, it sends a signal where current is None, but I don't understand why
+            # when clicking on a previously selected list, it sends a signal where current is None
             if current is None:
                 return
             item = current.data(Qt.UserRole)
@@ -461,7 +465,7 @@ class Interface(QMainWindow):
 
         # XEL-60 adding a display of session number on the session list view
         for index, sess in enumerate(subject_list):  # XEL-60 index
-            item = QListWidgetItem_time(sess, f"# {index+1}  {_session_name(sess)}")  # XEL-60 adding index to view
+            item = QListWidgetItemTime(sess, f"# {index + 1}  {_session_name(sess)}")  # XEL-60 adding index to view
             if sess.id in self.search.sessions:
                 highlight(item)
             self.lists['sessions'].addItem(item)
@@ -484,7 +488,7 @@ class Interface(QMainWindow):
             l.clear()
 
         for i, run in enumerate(sess.list_runs()):
-            item = QListWidgetItem_time(run, f'#{i + 1: 3d}: {run.task_name}')
+            item = QListWidgetItemTime(run, f'#{i + 1: 3d}: {run.task_name}')
             if run.id in self.search.runs:
                 highlight(item)
             self.lists['runs'].addItem(item)
@@ -640,7 +644,7 @@ class Interface(QMainWindow):
             item = QTableWidgetItem(val['parameter'])
             item.setFlags(Qt.ItemIsSelectable | Qt.ItemIsEnabled)
             self.t_params.setItem(i, 1, item)
-            item = QTableWidgetItem(str(val['value']))
+            # item = QTableWidgetItem(str(val['value']))
             self.t_params.setCellWidget(i, 2, val['value'])
 
         # ASP-68 Addition of dedicated function call to modify visuals of parameters
@@ -835,6 +839,7 @@ class Interface(QMainWindow):
             self.t_export.setItem(i, 3, item)
 
     def rightclick_table(self, pos, table=None):
+        view = None  # ASP-113 View could be used before creation
         if table == 'events':
             view = self.events_view
         elif table == 'channels':
@@ -864,19 +869,19 @@ class Interface(QMainWindow):
 
         if table == 'events':
             run = self.current('runs')
-            X = run.events
+            x = run.events
         else:
             current = self.current(table)
-            X = current.data
+            x = current.data
 
-        X = load_tsv(Path(tsv_file), X.dtype)
+        x = load_tsv(Path(tsv_file), x.dtype)
 
         if table == 'events':
-            run.events = X
+            run.events = x
             self.show_events(run)
 
         else:
-            current.data = _fake_names(X)
+            current.data = _fake_names(x)
             recording = self.current('recordings')
             self.list_channels_electrodes(recording=recording)
 
@@ -895,12 +900,12 @@ class Interface(QMainWindow):
 
         if table == 'events':
             run = self.current('runs')
-            X = run.events
+            x = run.events
         else:
             current = self.current(table)
-            X = current.data
+            x = current.data
 
-        save_tsv(Path(tsv_file), X)
+        save_tsv(Path(tsv_file), x)
 
     def rightclick_list(self, pos, level=None):
         item = self.lists[level].itemAt(pos)
@@ -1072,7 +1077,7 @@ class Interface(QMainWindow):
         create_bids(self.db, data_path, deface=False, subset=subset)
 
     def new_item(self, checked=None, level=None):
-
+        ok, text = None, None  # ASP-113 ok and text could be reached before creation
         if level == 'subjects':
             text, ok = QInputDialog.getText(
                 self,
@@ -1221,14 +1226,14 @@ class Interface(QMainWindow):
         if result:
             level = get_new_file.level.currentText().lower() + 's'
             item = self.current(level)
-            format = get_new_file.format.currentText()
+            format_file = get_new_file.format.currentText()
             path = get_new_file.filepath.text()
 
             # ASP-102 Providing a bit more information to the user if no recording can be found.
             if item is None:
                 _throw_msg_box('Warning!', "Please add a Recording, before you add recording file(s).")
             else:  # ASP-102 only add the file and list_files()/modified() if item is not None, prevent XCB error
-                item.add_file(format, path)
+                item.add_file(format_file, path)
                 self.list_files()
                 self.modified()
 
@@ -1237,10 +1242,10 @@ class Interface(QMainWindow):
         result = get_new_file.exec()
 
         if result:
-            format = get_new_file.format.currentText()
+            format_file = get_new_file.format.currentText()
             path = get_new_file.filepath.text()
             file_obj.path = path
-            file_obj.format = format
+            file_obj.format = format_file
 
         self.list_files()
         self.modified()
@@ -1257,7 +1262,9 @@ class Interface(QMainWindow):
         rec_fixed = recordings[0]
         rec_moving = self.current('recordings')
         if rec_fixed.id == rec_moving.id:
-            QMessageBox.warning(self, warning_title, 'This function compares the first recording with the highlighted recording. Please select another recording to compute the offset')
+            QMessageBox.warning(self, warning_title,
+                                'This function compares the first recording with the highlighted recording. '
+                                'Please select another recording to compute the offset')
             return
 
         file_fixed = find_one_file(rec_fixed, ('blackrock', 'micromed', 'bci2000'))
@@ -1619,22 +1626,23 @@ def make_combobox(value, possible_values):
 
 def make_electrode_combobox(self, elec):
     subj = self.lists['subjects'].currentItem().data(Qt.UserRole)
-    INTENDED = {'Unknown': 0}
+    intended = {'Unknown': 0}
     for sess in subj.list_sessions():
         sess_name = _session_name(sess)
         for i, one_run in enumerate(sess.list_runs()):
-            if one_run.task_name in ('ct_anatomy_scan', 'flair_anatomy_scan', 't1_anatomy_scan', 't2_anatomy_scan', 't2star_anatomy_scan', 'MP2RAGE'):
+            if one_run.task_name in ('ct_anatomy_scan', 'flair_anatomy_scan', 't1_anatomy_scan', 't2_anatomy_scan',
+                                     't2star_anatomy_scan', 'MP2RAGE'):
                 name = f'#{i + 1: 2d}: {one_run.task_name}'
-                INTENDED[sess_name + ' / ' + name] = one_run.id
+                intended[sess_name + ' / ' + name] = one_run.id
 
     w = QComboBox()
-    for k in INTENDED:
+    for k in intended:
         w.addItem(k)
 
     intendedfor = elec.IntendedFor
     if intendedfor is not None:
-        w.setCurrentIndex(list(INTENDED.values()).index(intendedfor))
-    w.currentIndexChanged.connect(partial(self.electrode_intendedfor, elec=elec, combobox=list(INTENDED.values())))
+        w.setCurrentIndex(list(intended.values()).index(intendedfor))
+    w.currentIndexChanged.connect(partial(self.electrode_intendedfor, elec=elec, combobox=list(intended.values())))
 
     return w
 
@@ -1682,7 +1690,7 @@ def highlight(item):
     item.setFont(font)
 
 
-class QListWidgetItem_time(QListWidgetItem):
+class QListWidgetItemTime(QListWidgetItem):
     def __init__(self, obj, title):
         self.obj = obj
         super().__init__(title)
@@ -1692,11 +1700,11 @@ class QListWidgetItem_time(QListWidgetItem):
         return self.obj.start_time < other.obj.start_time
 
 
-def _fake_names(X):
+def _fake_names(x):
     """We cannot have empty channel names, so we use it the MICROMED
     convention
     """
-    for i in range(X['name'].shape[0]):
-        if X['name'][i] == '':
-            X['name'][i] = f'el{i + 1}'
-    return X
+    for i in range(x['name'].shape[0]):
+        if x['name'][i] == '':
+            x['name'][i] = f'el{i + 1}'
+    return x
