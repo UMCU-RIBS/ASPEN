@@ -1,3 +1,4 @@
+from PyQt5.QtWidgets import QInputDialog
 from wonambi import Dataset
 from xelo2.api import Channels
 from numpy import nan, array
@@ -22,7 +23,10 @@ def create_channels_trc(db, trc_path):
     d = Dataset(trc_path)
     trc_chans = d.header['orig']['chans']
 
-    chan = Channels.add_rec_file(db, str(trc_path))
+    # ASP-107 fixing the untitled entry when adding from import channel func
+    _name_new_entry = _get_new_channel_group_name()
+
+    chan = Channels.add_rec_file(db, str(trc_path), str(_name_new_entry))
     channels = chan.empty(len(trc_chans))  # original tries to create empty numpy array
 
     labels = [ch['chan_name'] for ch in trc_chans]
@@ -59,7 +63,10 @@ def create_channels_blackrock(db, blackrock_path):
 
     b_chans = d.header['orig']['ElectrodesInfo']
 
-    chan = Channels.add_rec_file(db, str(blackrock_path))
+    # ASP-107 fixing the untitled entry when adding from import channel func
+    _name_new_entry = _get_new_channel_group_name()
+
+    chan = Channels.add_rec_file(db, str(blackrock_path), str(_name_new_entry))
     channels = chan.empty(len(b_chans))
 
     labels = [ch['Label'] for ch in b_chans]
@@ -84,7 +91,10 @@ def create_channels_bci2000(db, bci2000_path):
     d = Dataset(bci2000_path)
     bci2000_chans = d.header['chan_name']
 
-    chan = Channels.add_rec_file(db, str(bci2000_path))
+    # ASP-107 fixing the untitled entry when adding from import channel func
+    _name_new_entry = _get_new_channel_group_name()
+
+    chan = Channels.add_rec_file(db, str(bci2000_path), str(_name_new_entry))
     channels = chan.empty(len(bci2000_chans))  # original tries to create empty numpy array
 
     channels['name'] = bci2000_chans
@@ -168,3 +178,15 @@ def _choose_group(label, groups):
             return k
 
     return 'n/a'
+
+
+def _get_new_channel_group_name() -> str:
+    _text, _ok = QInputDialog.getItem(
+        None,
+        f'Add new channel',
+        'Select one',  # Label
+        ["clinical-ECoG", "clinical_ECoG-SDE", "HD-ECoG", "sEEG", "clinical-HD-ECoG", "clinical-HD-ECoG-SDE"],
+        0,  # Current
+        False  # Editable
+    )
+    return _text
