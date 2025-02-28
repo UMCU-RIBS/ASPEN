@@ -22,7 +22,7 @@ def create_channels_trc(db, trc_path):
     d = Dataset(trc_path)
     trc_chans = d.header['orig']['chans']
 
-    chan = Channels.add(db)
+    chan = Channels.add_rec_file(db, str(trc_path))
     channels = chan.empty(len(trc_chans))  # original tries to create empty numpy array
 
     labels = [ch['chan_name'] for ch in trc_chans]
@@ -59,7 +59,7 @@ def create_channels_blackrock(db, blackrock_path):
 
     b_chans = d.header['orig']['ElectrodesInfo']
 
-    chan = Channels.add(db)
+    chan = Channels.add_rec_file(db, str(blackrock_path))
     channels = chan.empty(len(b_chans))
 
     labels = [ch['Label'] for ch in b_chans]
@@ -84,7 +84,7 @@ def create_channels_bci2000(db, bci2000_path):
     d = Dataset(bci2000_path)
     bci2000_chans = d.header['chan_name']
 
-    chan = Channels.add(db)
+    chan = Channels.add_rec_file(db, str(bci2000_path))
     channels = chan.empty(len(bci2000_chans))  # original tries to create empty numpy array
 
     channels['name'] = bci2000_chans
