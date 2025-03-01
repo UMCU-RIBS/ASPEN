@@ -363,7 +363,7 @@ def _make_bids_config(data_path):
 def _make_README(data_path):
 
     with (data_path / 'README').open('w') as f:
-        f.write('Converted with xelo2')
+        f.write('Converted with aspen')
 
 
 def _set_date_to_1900(base_date, datetime_of_interest):

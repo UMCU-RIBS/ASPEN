@@ -10,4 +10,4 @@ htmlcov/
 *.idea
 *__pycache__
 
-xelo2.egg-info/*
+aspen.egg-info/*

@@ -1,7 +1,7 @@
 from logging import DEBUG, getLogger, Formatter, FileHandler
 from .paths import LOG_PATH
 
-lg = getLogger('xelo2')
+lg = getLogger('aspen')
 lg.setLevel(DEBUG)
 lg.handlers = []
 

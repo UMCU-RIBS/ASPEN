@@ -26,7 +26,7 @@ app = QApplication([])
 
 def main():
 
-    parser = ArgumentParser(prog='open xelo2 database')
+    parser = ArgumentParser(prog='open aspen database')
     parser.add_argument(
         '--mysql', default=None,
         help='MYSQL database')

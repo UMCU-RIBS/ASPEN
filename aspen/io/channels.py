@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QInputDialog
 from wonambi import Dataset
-from xelo2.api import Channels
+from aspen.api import Channels
 from numpy import nan, array
 from re import match
 

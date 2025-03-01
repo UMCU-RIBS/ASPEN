@@ -48,7 +48,7 @@ install:
   - pip3 install -e .
 
 script:
-  - pytest-3 --cov=xelo2 tests/ -vv
+  - pytest-3 --cov=aspen tests/ -vv
 
 after_success:
   - codecov

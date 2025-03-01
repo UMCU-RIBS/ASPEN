@@ -1,4 +1,4 @@
-## XELO2
+## Aspen
 
 [Installation](installation.md)
 
@@ -8,4 +8,4 @@
 
 [House Keeping](housekeeping.md)
 
-[API](xelo2/index.html)
+[API](aspen/index.html)

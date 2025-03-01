@@ -7,7 +7,7 @@ from numpy import (
     empty,
     floating,
     isnan,
-    NaN,
+    # NaN,
     issubdtype,
     )
 from PyQt5.QtSql import QSqlQuery

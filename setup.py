@@ -1,10 +1,10 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='xelo2',
-    version='0.2',
+    name='aspen',
+    version='0.3',
     description='Database GUI',
-    url='https://github.com/umcu-ribs/xelo2',
+    url='https://github.com/umcu-ribs/aspen',
     author="Gio Piantoni",
     author_email='xelo2@gpiantoni.com',
     license='GPLv3',
@@ -26,13 +26,13 @@ setup(
         # 'PyQt5'
     ],
     package_data={
-        'xelo2': [
+        'aspen': [
             'database/tables.json',
             ],
         },
     entry_points={
         'console_scripts': [
-            'xelo2=xelo2.gui.main:main',
+            'aspen=aspen.gui.main:main',
         ],
     },
 )

@@ -3,8 +3,8 @@ from typing import Union, Any
 from PyQt5.QtCore import QDate, Qt
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QSpinBox, QMessageBox, QTableWidget, QTableWidgetItem, QComboBox
-from xelo2.api.utils import sort_data_created
-from xelo2.gui.models import FilesWidget
+from aspen.api.utils import sort_data_created
+from aspen.gui.models import FilesWidget
 
 # for specified parameters we want to change the color of.
 PARAMETERS_COLOR_CHANGE = ["RunsParadigm", "RunsAlternative Name", "RunsNumber Classes", "RunsClasses"]

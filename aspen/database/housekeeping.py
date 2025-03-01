@@ -40,7 +40,7 @@ def add_allowed_value(db, table, column, value):
     if not query.exec():
         raise SyntaxError(query.lastError().text())
 
-    lg.warning('Value correctly added. Changes will take place immediately for SQL, but GUI is not updated until you restart xelo2')
+    lg.warning('Value correctly added. Changes will take place immediately for SQL, but GUI is not updated until you restart aspen')
 
 
 def recap(subj, sess, run, trial_type='speech'):

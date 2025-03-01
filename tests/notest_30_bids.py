@@ -1,5 +1,5 @@
-from xelo2.bids.root import prepare_subset, create_bids
-from xelo2.database.create import open_database, close_database
+from aspen.bids.root import prepare_subset, create_bids
+from aspen.database.create import open_database, close_database
 
 from .paths import BIDS_DIR, DB_ARGS
 

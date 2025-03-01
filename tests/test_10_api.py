@@ -2,9 +2,9 @@ from datetime import datetime, date
 from pytest import raises
 from numpy import empty
 
-from xelo2.api import Subject, list_subjects, Electrodes, Channels, File
-from xelo2.api.filetype import parse_filetype
-from xelo2.database import access_database, close_database, add_allowed_value
+from aspen.api import Subject, list_subjects, Electrodes, Channels, File
+from aspen.api.filetype import parse_filetype
+from aspen.database import access_database, close_database, add_allowed_value
 
 from .paths import TRC_PATH, DB_ARGS, T1_PATH
 
