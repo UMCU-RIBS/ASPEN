@@ -1,8 +1,8 @@
 from datetime import datetime
 
-from xelo2.database.create import open_database, close_database
-from xelo2.api import Subject, Channels
-from xelo2.gui.interface import Interface
+from aspen.database.create import open_database, close_database
+from aspen.api import Subject, Channels
+from aspen.gui.interface import Interface
 
 from .paths import DB_ARGS
 

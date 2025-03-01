@@ -1,6 +1,6 @@
 from datetime import datetime
 from pathlib import Path
-from xelo2.io.xelo.xml import read_xml_subject, read_xml_task_only
+from aspen.io.xelo.xml import read_xml_subject, read_xml_task_only
 
 XML_SUBJECTS = Path('/Fridge/metadata/XML_files/Subject_XML_files/')
 UPDATES_DIR = Path('/home/giovanni/tools/xelo2bids/xelo2bids/data/metadata/updates/')

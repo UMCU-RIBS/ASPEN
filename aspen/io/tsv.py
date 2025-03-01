@@ -1,5 +1,6 @@
 from collections import defaultdict
-from numpy import floating, character, issubdtype, isnan, empty, NaN
+# from numpy import floating, character, issubdtype, isnan, empty, NaN
+from numpy import floating, character, issubdtype, isnan, empty
 from numpy.lib.recfunctions import rename_fields, drop_fields
 
 

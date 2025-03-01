@@ -121,7 +121,7 @@ FILTER_TASKS.extend(UNKNOWN_TASKS)
 EXTRA_LEVELS = ['channels', 'electrodes']
 NULL_TEXT = 'Unknown / Unspecified'
 
-settings = QSettings("xelo2", "xelo2")
+settings = QSettings("aspen", "aspen")
 lg = getLogger(__name__)
 
 

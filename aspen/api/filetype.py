@@ -21,6 +21,7 @@ def parse_filetype(file_path):
     elif suffix == '.trc':
         data_type = 'micromed'
 
+    # TODO get rid of the ns1..ns9 we wont need those just the nev file as it is the header
     elif suffix in ('.nev', '.ns1', '.ns2', '.ns3', '.ns4', '.ns5', '.ns6', '.ns7', '.ns8', '.ns9'):
         data_type = 'blackrock'
 

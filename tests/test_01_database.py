@@ -1,4 +1,4 @@
-from xelo2.database import access_database, close_database
+from aspen.database import access_database, close_database
 
 from .paths import DB_ARGS
 
