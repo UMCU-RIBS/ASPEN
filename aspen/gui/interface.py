@@ -911,10 +911,16 @@ class Interface(QMainWindow):
         item = self.lists[level].itemAt(pos)
 
         menu = QMenu(self)
-        if item is None:
+        # ASP-107 deprecating manually adding channel files
+        if item is None and level == 'channels':
             action = QAction(f'Add {level}', self)
-            # ASP-107 deprecating manually adding channel files
             action.triggered.connect(lambda x: _throw_msg_box("Deprecated", "Use 'Import > channels from IEEG/EEG/MEG recording' option instead"))
+            menu.addAction(action)
+
+        # ASP-107 still need this one for all other in-menu right-clicks
+        elif item is None:
+            action = QAction(f'Add {level}', self)
+            action.triggered.connect(lambda x: self.new_item(level=level))
             menu.addAction(action)
 
         else:
