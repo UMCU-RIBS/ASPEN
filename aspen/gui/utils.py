@@ -180,8 +180,8 @@ def _mark_channel_file_visual(recording_files: FilesWidget, channels: [], params
         _hits_for_both_filepaths = set(_) & set(_channel_based_on_file)
 
         # Mark the hits/misses based on the _hits_for_both_filepaths
-        _iterate_filewidget_actions(recording_files, _hits_for_both_filepaths, QColor("green"))
-        _iterate_channels_actions(channels, channels_listed, _hits_for_both_filepaths, QColor("green"))
+        _iterate_filewidget_actions(recording_files, _hits_for_both_filepaths, QColor(0, 255, 0, 127))
+        _iterate_channels_actions(channels, channels_listed, _hits_for_both_filepaths, QColor(0, 255, 0, 127))
 
 
 def _iterate_filewidget_actions(file_widget: FilesWidget, check_list: set, change_color: QColor) -> None:
@@ -195,15 +195,17 @@ def _iterate_filewidget_actions(file_widget: FilesWidget, check_list: set, chang
                 file_widget.item(row, 1).setBackground(change_color)
                 file_widget.item(row, 2).setBackground(change_color)
             else:
-                file_widget.item(row, 0).setBackground(QColor("gray"))
-                file_widget.item(row, 1).setBackground(QColor("gray"))
-                file_widget.item(row, 2).setBackground(QColor("gray"))
+                file_widget.item(row, 0).setBackground(QColor(160, 160, 160, 160))
+                file_widget.item(row, 1).setBackground(QColor(160, 160, 160, 160))
+                file_widget.item(row, 2).setBackground(QColor(160, 160, 160, 160))
+                file_widget.item(row, 2).setForeground(QColor(255, 0, 0, 127))
 
     if len(check_list) == 0:  # if empty set
         for row in range(file_widget.rowCount()):
-            file_widget.item(row, 0).setBackground(QColor("gray"))
-            file_widget.item(row, 1).setBackground(QColor("gray"))
-            file_widget.item(row, 2).setBackground(QColor("gray"))
+            file_widget.item(row, 0).setBackground(QColor(160, 160, 160, 160))
+            file_widget.item(row, 1).setBackground(QColor(160, 160, 160, 160))
+            file_widget.item(row, 2).setBackground(QColor(160, 160, 160, 160))
+            file_widget.item(row, 2).setForeground(QColor(255, 0, 0, 127))
 
 
 def _iterate_channels_actions(channels: [], channels_listed: Any, check_list: set, change_color: QColor) -> None:
@@ -215,11 +217,13 @@ def _iterate_channels_actions(channels: [], channels_listed: Any, check_list: se
             if channel.based_on_file in check_list:
                 channels_listed.item(idx).setBackground(change_color)
             else:
-                channels_listed.item(idx).setBackground(QColor("gray"))
+                channels_listed.item(idx).setBackground(QColor(160, 160, 160, 127))
+                channels_listed.item(idx).setForeground(QColor(255, 0, 0, 127))
 
     if len(check_list) == 0:  # if empty set
         for idx, channel in enumerate(channels):
-            channels_listed.item(idx).setBackground(QColor("gray"))
+            channels_listed.item(idx).setBackground(QColor(160, 160, 160, 127))
+            channels_listed.item(idx).setForeground(QColor(255, 0, 0, 127))
 
 
 def get_fp_rec_file(t_files: FilesWidget, return_list: bool = False) -> Union[str, list]:
