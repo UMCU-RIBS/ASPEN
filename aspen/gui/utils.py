@@ -162,14 +162,17 @@ def _mark_channel_file_visual(recording_files: FilesWidget, channels: [], params
     """Filter on dates 2025 and onwards. will check if the path under files and the based_on_file under channel_group
     have any matches, if it does it will mark both of them visually. It will mark any of the non-matching channel
     entries to disable and be non-interactable."""
-
     # First hit it will find under the dict params with session and data created
     _dict_result = next(
-        (item for item in params if item["level"] == "Sessions" and item["parameter"] == "Data Created"), None
+        (item for item in params if item["level"] == "Runs" and item["parameter"] == "Data Created"), None
     )
 
-    _timestamp_data_created = _dict_result["value"].date()  # extract the date
-    if _timestamp_data_created.year() >= 2025:
+    if _dict_result is None:
+        return
+    _dict_result = _dict_result['value'].text()  # get the string notation of the date
+    _dict_result = int(_dict_result[:4])  # convert the first 4 ,which would be the year notation (1900), to int
+
+    if _dict_result >= 2025:
         _ = get_fp_rec_file(recording_files, True)
 
         _channel_based_on_file = []
