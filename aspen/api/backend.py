@@ -7,7 +7,7 @@ from numpy import (
     empty,
     floating,
     isnan,
-    # NaN,
+    nan,
     issubdtype,
     )
 from PyQt5.QtSql import QSqlQuery
@@ -280,7 +280,7 @@ class NumpyTable(Table_with_files):
             for name in dtypes.names:
                 v = query.value(name)
                 if issubdtype(dtypes[name].type, floating) and v.isNull():
-                    row.append(NaN)
+                    row.append(nan)
                 else:
                     row.append(v.value())
 
@@ -320,7 +320,7 @@ class NumpyTable(Table_with_files):
         values = empty(n_rows, dtype=dtypes)
         for name in values.dtype.names:
             if issubdtype(dtypes[name].type, floating):
-                values[name].fill(NaN)
+                values[name].fill(nan)
 
         return values
 
