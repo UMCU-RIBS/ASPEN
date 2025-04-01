@@ -41,6 +41,17 @@ def parse_filetype(file_path):
     elif suffix == '.wav':
         data_type = 'wave'
 
+    # ASP-109 .mat files being put on electrodes or cortex depending on name
+    # You could get away with one if statement, but I am assuming we will have to check for matlab names soon.
+    elif suffix == '.mat':
+        file_name = Path(file_path).name.lower()
+        if file_name.find("electrodes") != -1:
+            data_type = 'Electrodes'
+        elif file_name.find("cortex") != -1:
+            data_type = 'Cortex'
+        else:
+            data_type = 'Electrodes'
+
     else:
         raise ValueError(f'Unknown file suffix "{suffix}"')
 
