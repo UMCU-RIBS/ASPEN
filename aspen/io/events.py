@@ -1,5 +1,5 @@
 from numpy import empty
-from wonambi.dataset import UnrecognizedFormat
+from ..wonambi.dataset import UnrecognizedFormat
 from sys import maxsize
 from logging import getLogger
 from .utils import localize_blackrock

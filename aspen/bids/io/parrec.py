@@ -1,9 +1,9 @@
 from logging import getLogger
 from pathlib import Path
 from numpy import unique
-from nibabel.parrec import parse_PAR_header
-from nibabel.cmdline.parrec2nii import get_opt_parser, proc_file, verbose
-from nibabel.mriutils import calculate_dwell_time
+from ...nibabel.parrec import parse_PAR_header
+from ...nibabel.cmdline.parrec2nii import get_opt_parser, proc_file, verbose
+from ...nibabel.mriutils import calculate_dwell_time
 from tempfile import mkdtemp
 
 lg = getLogger(__name__)

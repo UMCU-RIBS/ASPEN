@@ -13,17 +13,15 @@ setup(
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
         'Programming Language :: Python :: 3 :: Only',
-        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.11',
     ],
     keywords='database qt',
     packages=find_packages(),
     install_requires=[
-        # 'numpy',
-        # 'pandas',
-        # 'nibabel',
-        # 'wonambi',
-        # 'bidso',
-        # 'PyQt5'
+        'numpy',
+        'pandas',
+        'bidso',
+        'PyQt5'
     ],
     package_data={
         'aspen': [
