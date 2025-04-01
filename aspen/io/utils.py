@@ -1,6 +1,6 @@
 from numpy import floating, character, issubdtype
-from wonambi import Dataset
-from wonambi.ioeeg import BlackRock
+from ..wonambi import Dataset
+from ..wonambi.ioeeg import BlackRock
 from pytz import timezone
 
 

@@ -1,4 +1,4 @@
-from wonambi.ioeeg import BlackRock
+from ..wonambi.ioeeg.blackrock import BlackRock
 from numpy import empty, around
 from datetime import timedelta
 

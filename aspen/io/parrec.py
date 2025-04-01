@@ -1,5 +1,5 @@
 from datetime import timedelta, datetime
-from nibabel.parrec import parse_PAR_header
+from ..nibabel.parrec import parse_PAR_header
 from numpy import round
 
 

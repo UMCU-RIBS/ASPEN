@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QInputDialog
-from wonambi import Dataset
+from ..wonambi.dataset import Dataset
 from aspen.api import Channels
 from numpy import nan, array
 from re import match
@@ -181,6 +181,9 @@ def _choose_group(label, groups):
 
 
 def _get_new_channel_group_name() -> str:
+    """Function that gives the user a input dialog when entering a new channel item through import > channels. The
+    returned string will then be used as the name when entering into the database. This gets rid of any 'untitled'
+    items from showing up in the widget."""
     _text, _ok = QInputDialog.getItem(
         None,
         f'Add new channel',

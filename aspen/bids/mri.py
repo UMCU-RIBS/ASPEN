@@ -8,8 +8,8 @@ from subprocess import run, DEVNULL
 from tempfile import mkstemp, gettempdir
 import gzip
 
-from nibabel import save as nisave
-from nibabel import load as niload
+from ..nibabel import save as nisave
+from ..nibabel import load as niload
 from bidso.utils import replace_extension
 
 from .io.parrec import convert_parrec_nibabel
