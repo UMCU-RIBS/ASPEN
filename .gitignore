@@ -11,3 +11,8 @@ htmlcov/
 *__pycache__
 
 aspen.egg-info/*
+/aspen/nibabel/cifti2/tests/
+/aspen/nibabel/cmdline/tests/
+/aspen/nibabel/freesurfer/tests/
+/aspen/nibabel/gifti/tests/
+/aspen/nibabel/streamlines/tests/
