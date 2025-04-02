@@ -488,7 +488,12 @@ class Interface(QMainWindow):
             l.clear()
 
         for i, run in enumerate(sess.list_runs()):
-            item = QListWidgetItemTime(run, f'#{i + 1: 3d}: {run.task_name}')
+            # item = QListWidgetItemTime(run, f'#{i + 1: 3d}: {run.task_name}')
+            # checking for multiClassScreening for different display of task name in the list
+            if run.task_name == "MultiClassScreening":
+                item = QListWidgetItemTime(run, f'#{i + 1: 3d}: MCS_{run.mcs_task_design}_{run.mcs_num_classes}_{run.mcs_paradigm}')
+            else:
+                item = QListWidgetItemTime(run, f'#{i + 1: 3d}: {run.task_name}')
             if run.id in self.search.runs:
                 highlight(item)
             self.lists['runs'].addItem(item)
