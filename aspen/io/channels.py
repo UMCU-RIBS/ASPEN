@@ -20,6 +20,7 @@ def create_channels(db, ephys_path):
 
 
 def create_channels_trc(db, trc_path):
+    # TODO Get rid of wonambi import header file, so far no alternatives.
     d = Dataset(trc_path)
     trc_chans = d.header['orig']['chans']
 
@@ -45,6 +46,8 @@ def create_channels_trc(db, trc_path):
     channels['status'] = 'good'
     chan.data = channels
 
+    #TODO there is a field called electrodes and inside they have labels in there
+
     # Keeping these in code for further checks.
     # chan.data = labels
     # return [labels, chan_types]
@@ -52,6 +55,7 @@ def create_channels_trc(db, trc_path):
 
 
 def create_channels_blackrock(db, blackrock_path):
+    # TODO get rid of wonambi reading in the dat file, check link for github reference for loading nev files.
     if blackrock_path.suffix == '.nev':
         # ASP-91 Simple check to figure out if we need a .ns3 or .ns2, if we need a larger range of options use match.
         try:
