@@ -21,7 +21,7 @@ from .ioeeg import (Abf,
                     Micromed,
                     BCI2000,
                     OpenEphys,
-                    Text,
+                    # Text,
                     BIDS,
                     LyonRRI,
                     )
@@ -337,8 +337,8 @@ def detect_format(filename):
         elif list(filename.glob('*.openephys')):
             sessions = _count_openephys_sessions(filename)
             return OpenEphys, sessions
-        elif list(filename.glob('*.txt')):
-            return Text, sessions
+        # elif list(filename.glob('*.txt')):
+        #     return Text, sessions
         else:
             raise UnrecognizedFormat('Unrecognized format for directory ' +
                                      str(filename))
