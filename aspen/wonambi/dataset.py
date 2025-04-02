@@ -21,7 +21,7 @@ from .ioeeg import (Abf,
                     Micromed,
                     BCI2000,
                     OpenEphys,
-                    Text,
+                    # Text,
                     BIDS,
                     LyonRRI,
                     )
