@@ -6,7 +6,7 @@ from logging import getLogger
 from datetime import date, datetime
 from shutil import copy, rmtree
 
-from bidso.utils import replace_extension
+from ..bidso.utils import replace_extension
 from PyQt5.QtSql import QSqlQuery
 
 from ..api import list_subjects, Run

@@ -16,3 +16,4 @@ aspen.egg-info/*
 /aspen/nibabel/freesurfer/tests/
 /aspen/nibabel/gifti/tests/
 /aspen/nibabel/streamlines/tests/
+/tests/

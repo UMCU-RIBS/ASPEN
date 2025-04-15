@@ -5,8 +5,8 @@ setup(
     version='0.3',
     description='Database GUI',
     url='https://github.com/umcu-ribs/aspen',
-    author="Gio Piantoni",
-    author_email='xelo2@gpiantoni.com',
+    author="Gio Piantoni, Erdi Erdal",
+    author_email='e.erdal@umcutrecht.nl',
     license='GPLv3',
     classifiers=[
         'Environment :: X11 Applications :: Qt',
@@ -20,7 +20,6 @@ setup(
     install_requires=[
         'numpy',
         'pandas',
-        'bidso',
         'PyQt5'
     ],
     package_data={

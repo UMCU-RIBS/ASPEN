@@ -10,7 +10,7 @@ import gzip
 
 from ..nibabel import save as nisave
 from ..nibabel import load as niload
-from bidso.utils import replace_extension
+from ..bidso.utils import replace_extension
 
 from .io.parrec import convert_parrec_nibabel
 from .utils import rename_task, make_bids_name, find_one_file, make_taskdescription, set_notnone

@@ -415,9 +415,13 @@ class AccessDatabase(QDialog):
 
         self.db_name = QLineEdit()
         self.hostname = QLineEdit()
-        self.hostname.setText('127.0.0.1')
+        # self.hostname.setText('127.0.0.1')
+        self.hostname.setText('ribsbot.umcutrecht.nl')
         self.username = QLineEdit()
         self.password = QLineEdit()
+        self.username.setText('testxelo2')
+        self.password.setText('testxelo2')
+        self.db_name.setText('testxelo2')
         self.password.setEchoMode(QLineEdit.Password)
         #
         formlayout = QFormLayout()

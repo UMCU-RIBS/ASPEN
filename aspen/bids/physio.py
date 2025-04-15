@@ -2,7 +2,7 @@ import gzip
 from json import dump
 from logging import getLogger
 
-from bidso.utils import replace_extension
+from ..bidso.utils import replace_extension
 from .utils import make_bids_name
 from .io.dataglove import parse_dataglove_log
 from .io.pulse_and_resp_scanner import parse_scanner_physio
