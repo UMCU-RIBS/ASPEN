@@ -5,11 +5,26 @@ from ldap3 import Server, Connection, ALL
 from pathlib import Path
 
 
+def load_config() -> {}:
+    """Read in the config file."""
+    config_path = Path(__file__).resolve().parent.parent.parent / "etc" / "aspen.conf"
+    config = {}
+    with open(config_path, 'r') as file:
+        for line in file:
+            line = line.strip()
+            if not line or line.startswith('#'):
+                continue
+            if '=' in line:
+                key, value = line.split('=', 1)
+                config[key.strip()] = value.strip()
+
+    return config
+
+
 class Ldap:
     def __init__(self):
         self.current_user = pwd.getpwuid(os.getuid()).pw_name
-        self.config = {}
-        self.load_config()
+        self.config = load_config()
         self.conn = Connection(Server(self.config['LDAPSERVER'], get_info=ALL, use_ssl=False))
         self.conn.bind()
 
@@ -44,17 +59,3 @@ class Ldap:
         else:
             return "No user found, no rights given"
 
-    def load_config(self) -> {}:
-        """Read in the config file."""
-        config_path = Path(__file__).resolve().parent.parent.parent / "etc" / "aspen.conf"
-
-        with open(config_path, 'r') as file:
-            for line in file:
-                line = line.strip()
-                if not line or line.startswith('#'):
-                    continue
-                if '=' in line:
-                    key, value = line.split('=', 1)
-                    self.config[key.strip()] = value.strip()
-
-        return self.config

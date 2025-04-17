@@ -84,6 +84,8 @@ from .modal import (
     parse_accessdatabase,
     )
 
+from .config import load_config, Ldap
+
 # XEL-71
 INACTIVE_TASKS = ['abled', 'action_selection', 'animal', 'angiography_scan', 'audcomsent', 'audcomword',
                   'auditory_attention', 'bargrasp', 'auditory_localizer', 'bair_finger_mapping',
@@ -138,6 +140,11 @@ class Interface(QMainWindow):
         self.channels_model = None
         self.events_model = None
         self.all_current_params = None
+        self.config = load_config()
+        self.ldap = Ldap()
+        self.current_user = self.ldap.current_user
+        self.current_user_rights = self.ldap.check_ldap_rights(self.ldap.current_user)
+        print(f"Welcome {self.current_user} you have logged in with {self.current_user_rights} rights.")
         create_menubar(self)
         create_shortcuts(self)
 
@@ -336,13 +343,15 @@ class Interface(QMainWindow):
         self.statusBar()
         self.show()
 
-        if db_name is None:
-            db_args = parse_accessdatabase(self)
-            if db_args is not None:
-                self.sql_access(**db_args)
+        # if db_name is None:
+        #     db_args = parse_accessdatabase(self)
+        #     if db_args is not None:
+        #         self.sql_access(**db_args)
+        #
+        # else:
+        #     self.sql_access(db_name, username, password, hostname=hostname)
 
-        else:
-            self.sql_access(db_name, username, password, hostname=hostname)
+        self.sql_access(self.config['DATABASENAME'], self.config['DATABASEUSER'], self.config['DATABASEPASSWD'], self.config['DATABASEHOST'])
 
     def sql_access(self, db_name=None, username=None, password=None, hostname=None):
         """This is where you access the database
