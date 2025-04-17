@@ -20,7 +20,8 @@ setup(
     install_requires=[
         'numpy',
         'pandas',
-        'PyQt5'
+        'PyQt5',
+        'ldap3'
     ],
     package_data={
         'aspen': [
