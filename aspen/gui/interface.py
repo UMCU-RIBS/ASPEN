@@ -1,3 +1,4 @@
+import sys
 from logging import getLogger
 from pathlib import Path
 from datetime import date, datetime
@@ -71,7 +72,7 @@ from .models import FilesWidget, EventsModel
 from .utils import (
     _protocol_name, _name, _session_name, guess_modality, _sort_session_bci, _check_session_bci,
     _session_bci_hide_fields, _check_change_age, _throw_msg_box, _update_visual_parameters_table,
-    _mark_channel_file_visual, get_fp_rec_file
+    _mark_channel_file_visual, get_fp_rec_file, admin_rights, editor_rights
     )
 from .modal import (
     NewFile,
@@ -144,7 +145,13 @@ class Interface(QMainWindow):
         self.ldap = Ldap()
         self.current_user = self.ldap.current_user
         self.current_user_rights = self.ldap.check_ldap_rights(self.ldap.current_user)
-        print(f"Welcome {self.current_user} you have logged in with {self.current_user_rights} rights.")
+        if self.current_user_rights is None:
+            _throw_msg_box(
+                "Welcome to Aspen",
+                f"Hi {self.current_user.capitalize()} you have no access to Aspen (yet). Contact the maintainers"
+                f" if you need access. Aspen will now close."
+            )
+            sys.exit(1)
         create_menubar(self)
         create_shortcuts(self)
 
@@ -352,6 +359,25 @@ class Interface(QMainWindow):
         #     self.sql_access(db_name, username, password, hostname=hostname)
 
         self.sql_access(self.config['DATABASENAME'], self.config['DATABASEUSER'], self.config['DATABASEPASSWD'], self.config['DATABASEHOST'])
+        self.user_actions = ""
+        match self.current_user_rights:
+            case "Admin":
+                self.user_actions = "\n- Read \n- Modify \n- Create \n- Delete"
+            case "Editor":
+                self.user_actions = "\n- Read \n- Modify \n- Create"
+            case "Reader":
+                self.user_actions = "\n- Read"
+            case _:
+                self.user_actions = "\n- None"
+
+        if self.current_user_rights is not None:
+            _throw_msg_box(
+                "Welcome to Aspen",
+                f"Hi {self.current_user.capitalize()} you are logged in with {self.current_user_rights} rights. "
+                f"\n You can do the following: \n{self.user_actions}",
+                msg_type="OK")
+        else:
+            sys.exit(1)
 
     def sql_access(self, db_name=None, username=None, password=None, hostname=None):
         """This is where you access the database
@@ -376,12 +402,14 @@ class Interface(QMainWindow):
 
         self.list_subjects()
 
+    @editor_rights
     def sql_commit(self):
         self.db['db'].commit()
         self.setWindowTitle('')
         self.unsaved_changes = False
         self.db['db'].transaction()
 
+    @editor_rights
     def sql_rollback(self):
         self.db['db'].rollback()
         self.unsaved_changes = False
@@ -767,6 +795,7 @@ class Interface(QMainWindow):
     def show_events(self, item):
         self.events_model.update(item.events)
 
+    @editor_rights
     def compare_events_with_file(self):
 
         run = self.current('runs')
@@ -811,6 +840,7 @@ class Interface(QMainWindow):
             self.electrodes_model.setFilter(f'electrode_group_id = {item.id}')
             self.electrodes_model.select()
 
+    @editor_rights
     def exporting(self, checked=None, subj=None, sess=None, run=None):
 
         if subj is None:
@@ -852,6 +882,7 @@ class Interface(QMainWindow):
             item = QTableWidgetItem(l['start_time'])
             self.t_export.setItem(i, 3, item)
 
+    @editor_rights
     def rightclick_table(self, pos, table=None):
         view = None  # ASP-113 View could be used before creation
         if table == 'events':
@@ -921,6 +952,7 @@ class Interface(QMainWindow):
 
         save_tsv(Path(tsv_file), x)
 
+    @editor_rights
     def rightclick_list(self, pos, level=None):
         item = self.lists[level].itemAt(pos)
 
@@ -950,6 +982,7 @@ class Interface(QMainWindow):
 
         menu.popup(self.lists[level].mapToGlobal(pos))
 
+    @editor_rights
     def rename_item(self, item):
         text, ok = QInputDialog.getText(
             self,
@@ -960,6 +993,7 @@ class Interface(QMainWindow):
         if ok and text != '':
             item.name = text
 
+    @admin_rights
     def delete_item(self, item):
         item.delete()
 
@@ -980,7 +1014,9 @@ class Interface(QMainWindow):
 
         self.list_params()
         self.list_files()
+        self.modified()
 
+    @editor_rights
     def rightclick_files(self, pos):
         item = self.t_files.itemAt(pos)
 
@@ -1016,6 +1052,7 @@ class Interface(QMainWindow):
             menu.addAction(action_delete)
             menu.popup(self.t_files.mapToGlobal(pos))
 
+    @editor_rights
     def open_file(self, file_path):
         if file_path.suffix.lower() == '.par':
             print(f'converting {file_path}')
@@ -1097,6 +1134,7 @@ class Interface(QMainWindow):
 
         create_bids(self.db, data_path, deface=False, subset=subset)
 
+    @editor_rights
     def new_item(self, checked=None, level=None):
         ok, text = None, None  # ASP-113 ok and text could be reached before creation
         if level == 'subjects':
@@ -1222,6 +1260,7 @@ class Interface(QMainWindow):
 
             self.modified()
 
+    @editor_rights
     def edit_subject_codes(self):
         subject = self.current('subjects')
         text = str(subject)
@@ -1240,6 +1279,7 @@ class Interface(QMainWindow):
             self.list_subjects()
             self.modified()
 
+    @editor_rights
     def new_file(self, checked=None, filename=None):
         get_new_file = NewFile(self, filename=filename)
         result = get_new_file.exec()
@@ -1258,6 +1298,7 @@ class Interface(QMainWindow):
                 self.list_files()
                 self.modified()
 
+    @editor_rights
     def edit_file(self, level_obj, file_obj):
         get_new_file = NewFile(self, file_obj, level_obj)
         result = get_new_file.exec()
@@ -1271,6 +1312,7 @@ class Interface(QMainWindow):
         self.list_files()
         self.modified()
 
+    @editor_rights
     def calculate_offset(self):
         warning_title = 'Cannot calculate offset'
         run = self.current('runs')
@@ -1309,6 +1351,7 @@ class Interface(QMainWindow):
             self.list_params()
             self.modified()
 
+    @editor_rights
     def edit_electrode_data(self):
         elec = self.current('electrodes')
         data = elec.data
@@ -1515,6 +1558,7 @@ class Interface(QMainWindow):
         self.modified()
         self.list_recordings()
 
+    @admin_rights
     def delete_file(self, level_obj, file_obj):
         level_obj.delete_file(file_obj)
         self.list_files()

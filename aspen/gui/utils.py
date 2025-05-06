@@ -1,3 +1,4 @@
+from functools import wraps
 from typing import Union, Any
 
 from PyQt5.QtCore import QDate, Qt
@@ -125,12 +126,16 @@ def _check_change_age(date_of_birth: QDate, start_time: QDate, target_widget: QS
 
 
 # ASP-102 Adding a reusable QMessageBox for warnings
-def _throw_msg_box(title: str, text: str, button_ok: bool = True) -> None:
+def _throw_msg_box(title: str, text: str, button_ok: bool = True, msg_type: str = None) -> None:
     """Reusable function for generating QMessageBox screens for the user. """
     _msg = QMessageBox()
-    _msg.setIcon(QMessageBox.Warning)
     _msg.setWindowTitle(title)
     _msg.setText(text)
+    if msg_type is None:
+        _msg.setIcon(QMessageBox.Warning)
+    elif msg_type.lower() == "ok":
+        _msg.setIcon(QMessageBox.Information)
+
     if button_ok:
         _msg.setStandardButtons(QMessageBox.Ok)
     else:
@@ -276,3 +281,25 @@ def get_table_items(table_widget):
                 row_data.append("")  # If the cell is empty
         items.append(row_data)
     return items
+
+
+def admin_rights(func):
+    @wraps(func)
+    def check_user(self, *args, **kwargs):
+        if self.current_user_rights != "Admin":
+            _throw_msg_box("Not enough Rights", "You need to have Admin rights for this action")
+            return
+        return func(self, *args, **kwargs)
+    return check_user
+
+
+def editor_rights(func):
+    @wraps(func)
+    def check_user(self, *args, **kwargs):
+        if self.current_user_rights == "Admin":
+            return func(self, *args, **kwargs)
+        elif self.current_user_rights != "Editor":
+            _throw_msg_box("Not enough Rights", "You need to have at least Editor rights for this action")
+            return
+        return func(self, *args, **kwargs)
+    return check_user

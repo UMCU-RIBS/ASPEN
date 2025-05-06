@@ -29,9 +29,11 @@ class Ldap:
         self.conn.bind()
 
     def close(self) -> None:
+        """Method to close the ldap connection, can be directly called. The LDAP class has a exit function so it will
+        close the connection itself."""
         self.conn.unbind()
 
-    def check_ldap_rights(self, name: str) -> str:
+    def check_ldap_rights(self, name: str) -> str | None:
         """Check if user that is provided is part of the reader,editor or admin group. Will return lowest group if
         user is present in multiple roles."""
         if self.conn.search(
@@ -57,5 +59,6 @@ class Ldap:
         ):
             return "Admin"
         else:
-            return "No user found, no rights given"
+            # return "No user found, no rights given"
+            return None
 
