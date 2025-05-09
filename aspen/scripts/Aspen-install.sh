@@ -18,4 +18,4 @@ git checkout master
 
 
 cd /usr/local/bin/
-ln -s /usr/local/aspen/ASPEN/StartAspen.py
+ln -s /usr/local/aspen/ASPEN/StartAspen.py aspen
