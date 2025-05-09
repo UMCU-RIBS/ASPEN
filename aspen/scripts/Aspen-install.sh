@@ -15,3 +15,7 @@ else
 	cd ASPEN
 fi
 git checkout master
+
+
+cd /usr/local/bin/
+ln -s /usr/local/aspen/ASPEN/StartAspen.py
