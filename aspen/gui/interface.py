@@ -145,6 +145,7 @@ class Interface(QMainWindow):
         self.ldap = Ldap()
         self.current_user = self.ldap.current_user
         self.current_user_rights = self.ldap.check_ldap_rights(self.ldap.current_user)
+        self.ldap.close()
         if self.current_user_rights is None:
             _throw_msg_box(
                 "Welcome to Aspen",
