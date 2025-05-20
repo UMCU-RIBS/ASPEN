@@ -32,7 +32,8 @@ from PyQt5.QtWidgets import (
     QTableWidgetItem,
     QVBoxLayout,
     QWidget,
-    )
+    QLabel,
+)
 from PyQt5.QtGui import (
     QBrush,
     QColor,
@@ -351,25 +352,19 @@ class Interface(QMainWindow):
         self.statusBar()
         self.show()
 
-        # if db_name is None:
-        #     db_args = parse_accessdatabase(self)
-        #     if db_args is not None:
-        #         self.sql_access(**db_args)
-        #
-        # else:
-        #     self.sql_access(db_name, username, password, hostname=hostname)
-
         self.sql_access(self.config['DATABASENAME'], self.config['DATABASEUSER'], self.config['DATABASEPASSWD'], self.config['DATABASEHOST'])
         self.user_actions = ""
-        match self.current_user_rights:
-            case "Admin":
-                self.user_actions = "\n- Read \n- Modify \n- Create \n- Delete"
-            case "Editor":
-                self.user_actions = "\n- Read \n- Modify \n- Create"
-            case "Reader":
-                self.user_actions = "\n- Read"
-            case _:
-                self.user_actions = "\n- None"
+        # Minor change, terminal is grabbing python3.9 on the terminal, match exp is 3.10+
+        if self.current_user_rights == "Admin":
+            self.user_actions = "\n- Read \n- Modify \n- Create \n- Delete"
+        elif self.current_user_rights == "Editor":
+            self.user_actions = "\n- Read \n- Modify \n- Create"
+        elif self.current_user_rights == "Reader":
+            self.user_actions = "\n- Read"
+        elif self.current_user_rights == "Student":  # ASP-123 Addition of the student group
+            self.user_actions = "\n- Certain fields are hidden \n- Read"
+        else:
+            self.user_actions = "\n- None"
 
         if self.current_user_rights is not None:
             _throw_msg_box(
@@ -626,9 +621,9 @@ class Interface(QMainWindow):
                 _start_time = parameters['Start Time']
                 _start_time.dateChanged.connect(lambda: _check_change_age(_dob, _start_time, _age))
 
-            # ASP-64 Check if we are dealing with BCI-session and clear the parameters that shouldn't be displayed
-            if _check_session_bci(current_session_name):
-                _session_bci_hide_fields(parameters)
+            # if _check_session_bci(current_session_name):  # ASP-64 Check if dealing with BCI-session, clear the params
+            # ASP-123 We want to hide certain fields for all sessions, so we can remove the 'bci-only' check
+            _session_bci_hide_fields(parameters)
 
             if k == 'runs':
                 w = Popup_Experimenters(obj, self)
@@ -692,6 +687,12 @@ class Interface(QMainWindow):
 
         # ASP-68 Addition of dedicated function call to modify visuals of parameters
         _update_visual_parameters_table(self.t_params)
+
+        # ASP-123 need to hide DoB, which is always the first element in self.all_current_params
+        if self.current_user_rights == "Student":
+            _ = QLabel()
+            _.setText("***")
+            self.t_params.setCellWidget(0, 2, _)
         self.t_params.blockSignals(False)
 
     def combo_chanelec(self, i, widget):
@@ -734,11 +735,20 @@ class Interface(QMainWindow):
                 continue
             obj = item.data(Qt.UserRole)
             for file in obj.list_files():
-                all_files.append({
-                    'level': self.groups[k].title(),
-                    'format': file.format,
-                    'path': file.path,
-                    'obj': [obj, file],
+                # ASP-123 For students account we hide the value for protocols
+                if self.current_user_rights == "Student" and self.groups[k].title() == "Protocols":
+                    all_files.append({
+                        'level': self.groups[k].title(),
+                        'format': file.format,
+                        'path': "***",
+                        'obj': [obj, file],
+                    })
+                else:
+                    all_files.append({
+                        'level': self.groups[k].title(),
+                        'format': file.format,
+                        'path': file.path,
+                        'obj': [obj, file],
                     })
 
         self.t_files.setRowCount(len(all_files))
@@ -763,6 +773,8 @@ class Interface(QMainWindow):
                 lg.warning(err)
                 item.setForeground(QBrush(QColor('orange')))
 
+            except AttributeError:
+                pass
             else:
                 if not path_exists:
                     item.setForeground(QBrush(QColor('red')))

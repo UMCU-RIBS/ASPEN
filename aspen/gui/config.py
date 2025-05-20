@@ -36,7 +36,15 @@ class Ldap:
     def check_ldap_rights(self, name: str) -> str | None:
         """Check if user that is provided is part of the reader,editor or admin group. Will return lowest group if
         user is present in multiple roles."""
+        # ASP-123 Addition of the ASPEN_GUEST_GROUP in LDAP that will be used for students. Guest is the lowest group.
         if self.conn.search(
+            search_base=self.config['LDAPSEARCHBASE'],
+            search_filter=f"{self.config['LDAPSEARCHCLASS']}{self.config['ASPEN_GUEST_GROUP']}(memberUid={name}))",
+            search_scope="SUBTREE",
+            attributes='*'
+        ):
+            return "Student"
+        elif self.conn.search(
             search_base=self.config['LDAPSEARCHBASE'],
             search_filter=f"{self.config['LDAPSEARCHCLASS']}{self.config['ASPEN_READER_GROUP']}(memberUid={name}))",
             search_scope="SUBTREE",

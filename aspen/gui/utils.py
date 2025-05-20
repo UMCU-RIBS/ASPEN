@@ -67,6 +67,12 @@ def _session_bci_hide_fields(dict_params: dict):
         del dict_params[field]
 
 
+def _session_hide_fields(dict_params: dict) -> None:
+    field = 'Xelo Stem'
+    if field in dict_params:
+        del dict_params[field]
+
+
 def guess_modality(run):
     task_name = run.task_name
     if task_name in ('t1_anatomy_scan', 'MP2RAGE'):
@@ -113,6 +119,7 @@ def _update_parm(value: int, target_widget: QSpinBox):
         _throw_msg_box("Age incorrect", "Age is below 0, check DoB and Start Time under Parameters.")
     if value > 0:
         target_widget.setValue(value)
+        target_widget.setStyleSheet("background-color: yellow; color: green")  # ASP-123 added visual
 
 
 # ASP-63 Slot function for dateChanged based on the "Date of Birth" parameter
