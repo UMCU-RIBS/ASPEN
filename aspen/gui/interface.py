@@ -1779,9 +1779,7 @@ class QListWidgetItemTime(QListWidgetItem):
 
 
 def _fake_names(x):
-    """We cannot have empty channel names, so we use it the MICROMED
-    convention
-    """
+    """We cannot have empty channel names, so we use it the MICROMED convention."""
     for i in range(x['name'].shape[0]):
         if x['name'][i] == '':
             x['name'][i] = f'el{i + 1}'
