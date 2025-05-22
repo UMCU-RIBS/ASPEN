@@ -1659,6 +1659,7 @@ def make_edit(value):
 def make_integer(value):
     w = QSpinBox()
     # w.setRange(-2e7, 2e7)
+    w.wheelEvent = lambda event: None  # ASP-72 disable scrolling for Qspinbox events
 
     if value is None:
         w.setValue(0)
@@ -1676,6 +1677,7 @@ def make_float(value):
     w = QDoubleSpinBox()
     w.setDecimals(3)
     w.setRange(-1e8, 1e8)
+    w.wheelEvent = lambda event: None  # ASP-72 disable scrolling for Qspinbox events
 
     if value is None:
         w.setValue(0)
@@ -1698,6 +1700,7 @@ def make_combobox(value, possible_values):
     values = [NULL_TEXT, ] + possible_values
     w.addItems(values)
     w.setCurrentText(value)
+    w.wheelEvent = lambda event: None  # ASP-72 disable scrolling for QComboBox events
 
     return w
 
@@ -1729,6 +1732,7 @@ def make_date(value):
     w = QDateEdit()
     w.setCalendarPopup(True)
     w.setDisplayFormat('yyyy-MM-dd')  # ASP-115 Streamlining same format for dates
+    w.wheelEvent = lambda event: None  # ASP-72 disable scrolling for QDate events
     if value is None:
         w.setDate(date(1900, 1, 1))
         palette = QPalette()
@@ -1744,6 +1748,7 @@ def make_datetime(value):
     w = QDateTimeEdit()
     w.setCalendarPopup(True)
     w.setDisplayFormat('yyyy-MM-dd HH:mm')  # ASP-115 Streamlining same format for dates and removal of seconds
+    w.wheelEvent = lambda event: None  # ASP-72 disable scrolling for QDateTime events
     if value is None:
         w.setDateTime(datetime(1900, 1, 1, 0, 0))
         palette = QPalette()
