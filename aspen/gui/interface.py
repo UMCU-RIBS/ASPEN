@@ -33,6 +33,7 @@ from PyQt5.QtWidgets import (
     QVBoxLayout,
     QWidget,
     QLabel,
+    QTabWidget,
 )
 from PyQt5.QtGui import (
     QBrush,
@@ -247,16 +248,20 @@ class Interface(QMainWindow):
         col_export.addWidget(p_doexport)
         w_export.setLayout(col_export)
 
-        # session and protocol in the same column
+        # session in one column # ASP-80 removal of protocol from this layout
         col_sessmetc = QVBoxLayout()
         col_sessmetc.addWidget(groups['sessions'])
-        col_sessmetc.addWidget(groups['protocols'])
 
-        # recordings, channels and electrodes
+        # Tabview for channels & Electrodes # ASP-80 moving chann-elec into a tabview
+        tabwidget_chan_elec = QTabWidget()
+        tabwidget_chan_elec.addTab(groups['channels'], 'channels')
+        tabwidget_chan_elec.addTab(groups['electrodes'], 'electrodes')
+
+        # recordings, tabwidget(channels and electrodes) & protocols # ASP-80 inclusion of protocols here
         col_recchanelec = QVBoxLayout()
         col_recchanelec.addWidget(groups['recordings'])
-        col_recchanelec.addWidget(groups['channels'])
-        col_recchanelec.addWidget(groups['electrodes'])
+        col_recchanelec.addWidget(tabwidget_chan_elec)
+        col_recchanelec.addWidget(groups['protocols'])
 
         # TOP PANELS
         layout_top = QHBoxLayout()
