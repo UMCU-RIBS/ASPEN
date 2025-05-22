@@ -1728,7 +1728,7 @@ def make_electrode_combobox(self, elec):
 def make_date(value):
     w = QDateEdit()
     w.setCalendarPopup(True)
-    w.setDisplayFormat('dd/MM/yyyy')
+    w.setDisplayFormat('yyyy-MM-dd')  # ASP-115 Streamlining same format for dates
     if value is None:
         w.setDate(date(1900, 1, 1))
         palette = QPalette()
@@ -1743,9 +1743,9 @@ def make_date(value):
 def make_datetime(value):
     w = QDateTimeEdit()
     w.setCalendarPopup(True)
-    w.setDisplayFormat('dd/MM/yyyy HH:mm:ss.zzz')
+    w.setDisplayFormat('yyyy-MM-dd HH:mm')  # ASP-115 Streamlining same format for dates and removal of seconds
     if value is None:
-        w.setDateTime(datetime(1900, 1, 1, 0, 0, 0))
+        w.setDateTime(datetime(1900, 1, 1, 0, 0))
         palette = QPalette()
         palette.setColor(QPalette.Text, Qt.red)
         w.setPalette(palette)
