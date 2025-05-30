@@ -34,6 +34,7 @@ from PyQt5.QtWidgets import (
     QWidget,
     QLabel,
     QTabWidget,
+    QGridLayout,
 )
 from PyQt5.QtGui import (
     QBrush,
@@ -131,7 +132,6 @@ lg = getLogger(__name__)
 
 
 class Interface(QMainWindow):
-    """TODO: disable everything until you load database"""
     db = None
     test = False
     unsaved_changes = False
@@ -263,18 +263,36 @@ class Interface(QMainWindow):
         col_recchanelec.addWidget(tabwidget_chan_elec)
         col_recchanelec.addWidget(groups['protocols'])
 
-        # TOP PANELS
-        layout_top = QHBoxLayout()
-        layout_top.addWidget(groups['subjects'])
-        layout_top.addLayout(col_sessmetc)
-        layout_top.addWidget(groups['runs'])
-        layout_top.addLayout(col_recchanelec)
+        # ASP-129 creation of the tabview, instead of the dockwidget
+        tabwidget_parms_etc = QTabWidget()
+        tabwidget_parms_etc.setTabPosition(1)  # South
+        tabwidget_parms_etc.addTab(t_params, 'Parameters')
+        tabwidget_parms_etc.addTab(self.events_view, 'Events')
+        tabwidget_parms_etc.addTab(self.electrodes_view, 'Electrodes')
+        tabwidget_parms_etc.addTab(self.channels_view, 'Channels')
+        tabwidget_parms_etc.addTab(w_export, 'Export')
+
+        # ASP-129 Side widgets in a tabwidget (parameters, electrodes, channels, export & events)
+        right_layout_parms_etc = QVBoxLayout()
+        right_layout_parms_etc.addWidget(tabwidget_parms_etc)
+
+        # Top Panels restructured
+        layout_grid = QGridLayout()
+        layout_grid.addWidget(groups['subjects'], 0, 0)
+        layout_grid.addLayout(col_sessmetc, 0, 1)
+        layout_grid.addWidget(groups['runs'], 0, 2)
+        layout_grid.addLayout(col_recchanelec, 0, 3)
+        layout_grid.addLayout(right_layout_parms_etc, 0, 4, 2, 2)
+        layout_grid.addWidget(t_files, 1, 0, 1, 4)
+
+        for col in range(6):
+            layout_grid.setColumnStretch(col, 1)
 
         # FULL LAYOUT
         # central widget
         central_widget = QWidget()
         layout = QVBoxLayout()
-        layout.addLayout(layout_top)
+        layout.addLayout(layout_grid)
         central_widget.setLayout(layout)
         self.setCentralWidget(central_widget)
 
@@ -282,59 +300,6 @@ class Interface(QMainWindow):
         self.setCorner(Qt.TopRightCorner, Qt.RightDockWidgetArea)
         self.setCorner(Qt.BottomLeftCorner, Qt.LeftDockWidgetArea)
         self.setCorner(Qt.BottomRightCorner, Qt.RightDockWidgetArea)
-
-        # parameters
-        dockwidget = QDockWidget('Parameters', self)
-        dockwidget.setWidget(t_params)
-        dockwidget.setAllowedAreas(Qt.RightDockWidgetArea | Qt.LeftDockWidgetArea)
-        dockwidget.setFeatures(QDockWidget.DockWidgetMovable | QDockWidget.DockWidgetFloatable)
-        dockwidget.setObjectName('dock_parameters')  # savestate
-        self.addDockWidget(Qt.RightDockWidgetArea, dockwidget)
-
-        # events
-        dockwidget = QDockWidget('Events', self)
-        dockwidget.setWidget(self.events_view)
-        dockwidget.setAllowedAreas(Qt.RightDockWidgetArea | Qt.LeftDockWidgetArea)
-        dockwidget.setFeatures(QDockWidget.DockWidgetMovable | QDockWidget.DockWidgetFloatable)
-        dockwidget.setObjectName('dock_events')  # savestate
-        self.addDockWidget(Qt.RightDockWidgetArea, dockwidget)
-
-        # channels
-        dockwidget = QDockWidget('Channels', self)
-        dockwidget.setWidget(self.channels_view)
-        dockwidget.setAllowedAreas(Qt.RightDockWidgetArea | Qt.LeftDockWidgetArea)
-        dockwidget.setFeatures(QDockWidget.DockWidgetMovable | QDockWidget.DockWidgetFloatable)
-        dockwidget.setObjectName('dock_channels')  # savestate
-        self.addDockWidget(Qt.RightDockWidgetArea, dockwidget)
-
-        # electrodes
-        dockwidget = QDockWidget('Electrodes', self)
-        temp_widget = QWidget()  # you need extra widget to set layout in qdockwidget
-        elec_layout = QVBoxLayout(temp_widget)
-        elec_layout.addWidget(self.elec_form)
-        elec_layout.addWidget(self.electrodes_view, stretch=1)
-        dockwidget.setWidget(temp_widget)
-
-        dockwidget.setAllowedAreas(Qt.RightDockWidgetArea | Qt.LeftDockWidgetArea)
-        dockwidget.setFeatures(QDockWidget.DockWidgetMovable | QDockWidget.DockWidgetFloatable)
-        dockwidget.setObjectName('dock_electrodes')  # savestate
-        self.addDockWidget(Qt.RightDockWidgetArea, dockwidget)
-
-        # files
-        dockwidget = QDockWidget('Files', self)
-        dockwidget.setWidget(t_files)
-        dockwidget.setAllowedAreas(Qt.TopDockWidgetArea | Qt.BottomDockWidgetArea)
-        dockwidget.setFeatures(QDockWidget.DockWidgetMovable | QDockWidget.DockWidgetFloatable)
-        dockwidget.setObjectName('dock_files')  # savestate
-        self.addDockWidget(Qt.BottomDockWidgetArea, dockwidget)
-
-        # export
-        dockwidget = QDockWidget('Export', self)
-        dockwidget.setWidget(w_export)
-        dockwidget.setAllowedAreas(Qt.RightDockWidgetArea | Qt.LeftDockWidgetArea)
-        dockwidget.setFeatures(QDockWidget.DockWidgetMovable | QDockWidget.DockWidgetFloatable)
-        dockwidget.setObjectName('dock_export')  # savestate
-        self.addDockWidget(Qt.RightDockWidgetArea, dockwidget)
 
         # restore geometry
         window_geometry = settings.value('window/geometry')
@@ -1499,47 +1464,6 @@ class Interface(QMainWindow):
         recording.attach_channels(chan)
         self.modified()
         self.list_recordings()
-
-    # ASP-83 temporarily disabled the original method to still keep a reference, can be removed after ASP-91.
-    # def io_electrodes(self):
-    #
-    #     mat_file = QFileDialog.getOpenFileName(
-    #         self,
-    #         "Open File",
-    #         None,
-    #         "Matlab (*.mat)")[0]
-    #
-    #     if mat_file == '':
-    #         return
-    #
-    #     rec = self.current('recordings')
-    #     # print(f" rec = {rec}")
-    #     chan = rec.channels
-    #     # print(f"_____chan = rec.channels {chan}")
-    #
-    #     chan_data = chan.data
-    #     # print(f"______++++++chan_data {chan_data}")
-    #     idx = isin(chan_data['type'], ('ECOG', 'SEEG'))
-    #     n_chan = idx.sum()
-    #     lg.warning(f'# of ECOG/SEEG channels for this recording: {n_chan}')
-    #
-    #     xyz = import_electrodes(mat_file, n_chan)
-    #     if xyz is None:
-    #         print('you need to do this manually')
-    #         return
-    #
-        # elec = Electrodes.add(self.db)
-        # elec_data = elec.empty(n_chan)
-    #     # elec_data = elec.empty(64)
-    #     elec_data['name'] = chan_data['name'][idx]
-    #     elec_data['x'] = xyz[:, 0]
-    #     elec_data['y'] = xyz[:, 1]
-    #     elec_data['z'] = xyz[:, 2]
-    #     elec.data = elec_data
-    #     rec.attach_electrodes(elec)
-    #
-    #     self.modified()
-    #     self.list_recordings()
 
     # ASP-83 Created a 'new' method for io_electrodes to get a better understanding of why the import isn't working
     def io_electrodes(self):
