@@ -9,7 +9,7 @@ mkdir -p /usr/local/aspen
 cd /usr/local/aspen
 if [ -d ASPEN ]; then
 	cd ASPEN
-	git pull master
+	git pull
 else
 	git clone https://github.com/UMCU-RIBS/ASPEN.git
 	cd ASPEN
