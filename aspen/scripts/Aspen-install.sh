@@ -1,4 +1,4 @@
-#!/bin/bash/python3
+#!/bin/bash
 
 
 apt install python3-pyqt5  python3-pyqt5.qtsql  python3-numpy  python3-pandas python3-ldap3
