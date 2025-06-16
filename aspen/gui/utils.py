@@ -3,12 +3,15 @@ from typing import Union, Any
 
 from PyQt5.QtCore import QDate, Qt
 from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QSpinBox, QMessageBox, QTableWidget, QTableWidgetItem, QComboBox
+from PyQt5.QtWidgets import QSpinBox, QMessageBox, QTableWidget
 from aspen.api.utils import sort_data_created
 from aspen.gui.models import FilesWidget
 
-# for specified parameters we want to change the color of.
-PARAMETERS_COLOR_CHANGE = ["RunsParadigm", "RunsAlternative Name", "RunsNumber Classes", "RunsClasses"]
+# Runs with the Specified Task Name that need extra parameters filled in for an alternative namechange
+TASKNAMES_MORE_PARMS = ["MultiClassScreening"]
+
+# for specified parameters we want to change the isDisabled value to True.
+PARAMETERS_DISABLE_TRUE = ["RunsParadigm", "RunsAlternative Name", "RunsNumber Classes", "RunsClasses"]
 
 
 def _protocol_name(protocol):
@@ -155,15 +158,13 @@ def _update_visual_parameters_table(table: QTableWidget):
     """ Function that takes the QTableWidget from interface.py and scans the table for predefined level+parameter
     combinations for those that need a color change. This function is not optimized, but it only deals with a list of
     roughly 60 items at the time of writing this function, so it should be fine. This function can be expanded to also
-    take into consideration different colors or enabling/disabling parameters.
+    take into consideration different colors or enabling/disabling parameters.color
     row0 = level, row1=parameter, row2=value"""
     for row in range(table.rowCount()):
-        if table.item(row, 0).text() + table.item(row, 1).text() in PARAMETERS_COLOR_CHANGE:
-            # Reference for color changes
-            # table.item(row, 0).setBackground(QColor("gray"))
-            # table.item(row, 1).setBackground(QColor("gray"))
-            # table.cellWidget(row, 2).setStyleSheet("background-color: gray;")
-
+        if table.item(row, 1).text() == "Task Name" and table.cellWidget(row, 2).currentText() in TASKNAMES_MORE_PARMS:
+            # If the above is true we do not want to disable the parameters in 'PARAMETERS_DISABLE_TRUE'
+            return
+        elif table.item(row, 0).text() + table.item(row, 1).text() in PARAMETERS_DISABLE_TRUE:
             table.item(row, 0).setFlags(Qt.ItemIsSelectable)
             table.item(row, 1).setFlags(Qt.ItemIsSelectable)
             table.cellWidget(row, 2).setDisabled(True)
