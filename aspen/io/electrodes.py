@@ -55,7 +55,9 @@ def _get_matlab_array(mat_file: str) -> dict:
      clean mat file with only one numpy.ndarray value, it will stop on the first find and return those values.
      :param mat_file: Str that should contain the path to the matlab file.
      :return: Dict with the numpy array inside the matlab file k-> index v-> x, y, z."""
-    for value in (_ := loadmat(mat_file).values()):
+    _values = loadmat(mat_file).values()
+    _ = None
+    for value in _values:
         if type(value) == numpy.ndarray:
             _ = value
             break
