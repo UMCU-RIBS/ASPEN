@@ -282,10 +282,10 @@ class Interface(QMainWindow):
         layout_grid.addLayout(col_sessmetc, 0, 1)
         layout_grid.addWidget(groups['runs'], 0, 2)
         layout_grid.addLayout(col_recchanelec, 0, 3)
-        layout_grid.addLayout(right_layout_parms_etc, 0, 4, 2, 2)
+        layout_grid.addLayout(right_layout_parms_etc, 0, 4, 2, 3)  # addWidget(widget, row, col, rowSpan, colSpan)
         layout_grid.addWidget(t_files, 1, 0, 1, 4)
 
-        for col in range(6):
+        for col in range(7):
             layout_grid.setColumnStretch(col, 1)
 
         # FULL LAYOUT
