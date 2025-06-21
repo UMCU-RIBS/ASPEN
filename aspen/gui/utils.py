@@ -13,6 +13,12 @@ TASKNAMES_MORE_PARMS = ["MultiClassScreening"]
 # for specified parameters we want to change the isDisabled value to True.
 PARAMETERS_DISABLE_TRUE = ["RunsParadigm", "RunsAlternative Name", "RunsNumber Classes", "RunsClasses"]
 
+# Fields that will be hidden for session type == 'bci'
+PARAMETERS_DISABLE_FOR_SESSION_BCI = ['Xelo Stem', 'Date of Surgery']
+
+# Fields that will be hidden for all session types
+PARAMETERS_DISABLE_FOR_SESSION_ALL = ['Xelo Stem']
+
 
 def _protocol_name(protocol):
     if protocol.metc == 'Request from clinic':
@@ -62,18 +68,19 @@ def _check_session_bci(session_name) -> bool:
 
 
 # ASP-64 Internal function to allow for removing a field from a dictionary
-def _session_bci_hide_fields(dict_params: dict):
+def _session_bci_hide_fields(dict_params: dict) -> None:
     """Function to mark which fields should be hidden when dealing with BCI sessions. Certain fields are not used by
     the BCI sessions. Theses are fields shown on the parameters section of the interface."""
-    field = 'Xelo Stem'
-    if field in dict_params:
-        del dict_params[field]
+    for parameter in PARAMETERS_DISABLE_FOR_SESSION_BCI:
+        if parameter in dict_params:
+            del dict_params[parameter]
 
 
-def _session_hide_fields(dict_params: dict) -> None:
-    field = 'Xelo Stem'
-    if field in dict_params:
-        del dict_params[field]
+def _all_session_types_hide_fields(dict_params: dict) -> None:
+    """A more general function that will always hide fields indifferent to which session type it belongs to."""
+    for parameter in PARAMETERS_DISABLE_FOR_SESSION_ALL:
+        if parameter in dict_params:
+            del dict_params[parameter]
 
 
 def guess_modality(run):

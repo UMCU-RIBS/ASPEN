@@ -591,9 +591,10 @@ class Interface(QMainWindow):
                 _start_time = parameters['Start Time']
                 _start_time.dateChanged.connect(lambda: _check_change_age(_dob, _start_time, _age))
 
-            # if _check_session_bci(current_session_name):  # ASP-64 Check if dealing with BCI-session, clear the params
+            if _check_session_bci(current_session_name):  # ASP-64 Check if dealing with BCI-session, clear the params
+                _session_bci_hide_fields(parameters)
             # ASP-123 We want to hide certain fields for all sessions, so we can remove the 'bci-only' check
-            _session_bci_hide_fields(parameters)
+            _all_session_types_hide_fields(parameters)
 
             if k == 'runs':
                 w = Popup_Experimenters(obj, self)
