@@ -109,7 +109,7 @@ INACTIVE_TASKS = ['abled', 'action_selection', 'animal', 'angiography_scan', 'au
 
 # XEL-71
 NO_MANAGER_TASKS = ['bair_hrfpattern', 'anatomie', 'angio', 'bair_prf', 'bair_spatialobject', 'bair_spatialpattern',
-                    'bair_temporalpattern', 'balltalk', 'calc', 'count', 'motor', 'picnam', 'verb', 'mouth_movements']
+                    'bair_temporalpattern', 'balltalk', 'calc', 'count', 'picnam', 'verb', 'mouth_movements']
 
 # ASP-71
 UNKNOWN_TASKS = ['instant_aud_recall', 'mental_rotation', 'move_imagine_rest', 'move_three_conditions', 'MP2RAGE',
