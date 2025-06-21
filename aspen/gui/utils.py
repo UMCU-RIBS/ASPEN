@@ -311,10 +311,8 @@ def admin_rights(func):
 def editor_rights(func):
     @wraps(func)
     def check_user(self, *args, **kwargs):
-        if self.current_user_rights == "Admin":
+        if self.current_user_rights in ("Admin", "Editor"):
             return func(self, *args, **kwargs)
-        elif self.current_user_rights != "Editor":
-            _throw_msg_box("Not enough Rights", "You need to have at least Editor rights for this action")
-            return
-        return func(self, *args, **kwargs)
+        _throw_msg_box("Not enough Rights", "You need to have at least Editor rights for this action")
+        return
     return check_user

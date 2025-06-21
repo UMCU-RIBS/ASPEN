@@ -75,7 +75,7 @@ from .models import FilesWidget, EventsModel
 from .utils import (
     _protocol_name, _name, _session_name, guess_modality, _sort_session_bci, _check_session_bci,
     _session_bci_hide_fields, _check_change_age, _throw_msg_box, _update_visual_parameters_table,
-    _mark_channel_file_visual, get_fp_rec_file, admin_rights, editor_rights
+    _mark_channel_file_visual, get_fp_rec_file, admin_rights, editor_rights, _all_session_types_hide_fields
     )
 from .modal import (
     NewFile,
@@ -369,14 +369,14 @@ class Interface(QMainWindow):
         self.list_subjects()
 
     @editor_rights
-    def sql_commit(self):
+    def sql_commit(self, *args, **kwargs):
         self.db['db'].commit()
         self.setWindowTitle('')
         self.unsaved_changes = False
         self.db['db'].transaction()
 
     @editor_rights
-    def sql_rollback(self):
+    def sql_rollback(self, *args, **kwargs):
         self.db['db'].rollback()
         self.unsaved_changes = False
         self.setWindowTitle('')
@@ -780,7 +780,7 @@ class Interface(QMainWindow):
         self.events_model.update(item.events)
 
     @editor_rights
-    def compare_events_with_file(self):
+    def compare_events_with_file(self, *args, **kwargs):
 
         run = self.current('runs')
         rec = self.current('recordings')
@@ -825,7 +825,7 @@ class Interface(QMainWindow):
             self.electrodes_model.select()
 
     @editor_rights
-    def exporting(self, checked=None, subj=None, sess=None, run=None):
+    def exporting(self, checked=None, subj=None, sess=None, run=None, *args, **kwargs):
 
         if subj is None:
             subj = self.lists['subjects'].currentItem().data(Qt.UserRole)
@@ -867,7 +867,7 @@ class Interface(QMainWindow):
             self.t_export.setItem(i, 3, item)
 
     @editor_rights
-    def rightclick_table(self, pos, table=None):
+    def rightclick_table(self, pos, table=None, *args, **kwargs):
         view = None  # ASP-113 View could be used before creation
         if table == 'events':
             view = self.events_view
@@ -937,7 +937,7 @@ class Interface(QMainWindow):
         save_tsv(Path(tsv_file), x)
 
     @editor_rights
-    def rightclick_list(self, pos, level=None):
+    def rightclick_list(self, pos, level=None, *args, **kwargs):
         item = self.lists[level].itemAt(pos)
 
         menu = QMenu(self)
@@ -967,7 +967,7 @@ class Interface(QMainWindow):
         menu.popup(self.lists[level].mapToGlobal(pos))
 
     @editor_rights
-    def rename_item(self, item):
+    def rename_item(self, item, *args, **kwargs):
         text, ok = QInputDialog.getText(
             self,
             f'Rename {item.t.split("_")[0]}',
@@ -1001,7 +1001,7 @@ class Interface(QMainWindow):
         self.modified()
 
     @editor_rights
-    def rightclick_files(self, pos):
+    def rightclick_files(self, pos, *args, **kwargs):
         item = self.t_files.itemAt(pos)
 
         if item is None:
@@ -1037,7 +1037,7 @@ class Interface(QMainWindow):
             menu.popup(self.t_files.mapToGlobal(pos))
 
     @editor_rights
-    def open_file(self, file_path):
+    def open_file(self, file_path, *args, **kwargs):
         if file_path.suffix.lower() == '.par':
             print(f'converting {file_path}')
             file_path = convert_parrec_nibabel(file_path)[0]
@@ -1119,7 +1119,7 @@ class Interface(QMainWindow):
         create_bids(self.db, data_path, deface=False, subset=subset)
 
     @editor_rights
-    def new_item(self, checked=None, level=None):
+    def new_item(self, checked=None, level=None, *args, **kwargs):
         ok, text = None, None  # ASP-113 ok and text could be reached before creation
         if level == 'subjects':
             text, ok = QInputDialog.getText(
@@ -1245,7 +1245,7 @@ class Interface(QMainWindow):
             self.modified()
 
     @editor_rights
-    def edit_subject_codes(self):
+    def edit_subject_codes(self, *args, **kwargs):
         subject = self.current('subjects')
         text = str(subject)
         if text == '(subject without code)':
@@ -1264,7 +1264,7 @@ class Interface(QMainWindow):
             self.modified()
 
     @editor_rights
-    def new_file(self, checked=None, filename=None):
+    def new_file(self, checked=None, filename=None, *args, **kwargs):
         get_new_file = NewFile(self, filename=filename)
         result = get_new_file.exec()
 
@@ -1283,7 +1283,7 @@ class Interface(QMainWindow):
                 self.modified()
 
     @editor_rights
-    def edit_file(self, level_obj, file_obj):
+    def edit_file(self, level_obj, file_obj, *args, **kwargs):
         get_new_file = NewFile(self, file_obj, level_obj)
         result = get_new_file.exec()
 
@@ -1297,7 +1297,7 @@ class Interface(QMainWindow):
         self.modified()
 
     @editor_rights
-    def calculate_offset(self):
+    def calculate_offset(self, *args, **kwargs):
         warning_title = 'Cannot calculate offset'
         run = self.current('runs')
         recordings = run.list_recordings()
@@ -1336,7 +1336,7 @@ class Interface(QMainWindow):
             self.modified()
 
     @editor_rights
-    def edit_electrode_data(self):
+    def edit_electrode_data(self, *args, **kwargs):
         elec = self.current('electrodes')
         data = elec.data
         edit_electrodes = EditElectrodes(self, data)
