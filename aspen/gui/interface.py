@@ -88,7 +88,7 @@ from .modal import (
     parse_accessdatabase,
     )
 
-from .config import load_config, Ldap
+from .config import load_config, Ldap, LdapLogin
 
 # XEL-71
 INACTIVE_TASKS = ['abled', 'action_selection', 'animal', 'angiography_scan', 'audcomsent', 'audcomword',
@@ -143,10 +143,37 @@ class Interface(QMainWindow):
         self.channels_model = None
         self.events_model = None
         self.all_current_params = None
+        self.current_user_rights = None
         self.config = load_config()
         self.ldap = Ldap()
         self.current_user = self.ldap.current_user
-        self.current_user_rights = self.ldap.check_ldap_rights(self.ldap.current_user)
+
+        self.ldap_login = LdapLogin()
+        if self.ldap_login.exec_() == QDialog.rejected:
+            sys.exit(1)  # Close Aspen if rejected
+
+        if self.current_user != self.ldap_login.usr_input.text():
+            _throw_msg_box(
+                "Faulty User",
+                f"Hi {self.current_user.capitalize()} you've tried to login with a different username,"
+                f" make sure you login with your current account. \n \n"
+                f" For safety reasons Aspen will now close."
+            )
+            sys.exit(1)
+
+        if self.ldap_login.psw_input.text() and self.ldap_login.usr_input.text() is not None:
+            _check = self.ldap.authenticate_user(self.ldap_login.usr_input.text(), self.ldap_login.psw_input.text())
+            if _check:
+                self.current_user_rights = self.ldap.check_ldap_rights(self.ldap_login.usr_input.text())
+                del self.ldap_login
+            else:
+                _throw_msg_box(
+                    "Faulty login",
+                    f"Hi {self.current_user.capitalize()} your password is incorrect. \n \n"
+                    f"Aspen will now close."
+                )
+                sys.exit(1)
+
         self.ldap.close()
         if self.current_user_rights is None:
             _throw_msg_box(
@@ -322,7 +349,9 @@ class Interface(QMainWindow):
         self.statusBar()
         self.show()
 
-        self.sql_access(self.config['DATABASENAME'], self.config['DATABASEUSER'], self.config['DATABASEPASSWD'], self.config['DATABASEHOST'])
+        self.sql_access(self.config['DATABASENAME'], self.config['DATABASEUSER'],
+                        self.config['DATABASEPASSWD'], self.config['DATABASEHOST'])
+        del self.config
         self.user_actions = ""
         # Minor change, terminal is grabbing python3.9 on the terminal, match exp is 3.10+
         if self.current_user_rights == "Admin":

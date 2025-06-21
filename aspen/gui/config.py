@@ -1,8 +1,12 @@
 """First attempt at getting an application side user control scheme going. """
 import os
 import pwd
-from ldap3 import Server, Connection, ALL
+
+from PyQt5.QtWidgets import QDialog, QLineEdit, QPushButton, QVBoxLayout, QLabel, QHBoxLayout
+from ldap3 import Server, Connection, ALL, SIMPLE
 from pathlib import Path
+
+from ldap3.core.exceptions import LDAPBindError
 
 
 def load_config() -> {}:
@@ -70,3 +74,59 @@ class Ldap:
             # return "No user found, no rights given"
             return None
 
+    def authenticate_user(self, usr, password) -> bool:
+        """Method that allows users to login with their uid instead of their CN name in ldap terms.
+        The method will connect to the servers, and try to find the uid user. It will try to login with the CN and
+        provided password"""
+        # ASP-124 Making a dedicated auth for ldap login with uid
+        try:
+            server = Server(self.config['LDAPSERVER'], get_info=ALL)
+            _ = self.conn.search(
+                search_base=self.config['LDAPSEARCHBASE'],
+                search_filter=f"(uid={usr})",
+                search_scope="SUBTREE",
+                attributes=['*']
+            )
+            try:
+                cn = self.conn.entries[0]['cn']
+            except Exception as e:
+                print(f"user cannot be found in the LDAP server, error=CN with uid-->{usr} not in LDAP")
+                return False
+            conn = Connection(server,
+                              user=f"cn={cn},OU=users,{self.config['LDAPSEARCHBASE']}",
+                              password=password,
+                              authentication=SIMPLE,
+                              auto_bind=True)
+            return True
+        except LDAPBindError as e:
+            print("Login failed:", e)
+            return False
+
+
+# ASP-124 Adding an LDAP auth login
+class LdapLogin(QDialog):
+    """A QDialog class that provides a simple login screen."""
+    # ASP-124 Making a dedicated Qdialog login screen for users to enter their username and password for LDAP auth
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Welcome to Aspen")
+        self.usr_input = QLineEdit()
+        self.psw_input = QLineEdit()
+        self.psw_input.setEchoMode(QLineEdit.Password)
+        self.ok_button = QPushButton("Login")
+        self.cancel_button = QPushButton("Cancel")
+
+        self.layout = QVBoxLayout()
+        self.layout.addWidget(QLabel("Username:"))
+        self.layout.addWidget(self.usr_input)
+        self.layout.addWidget(QLabel("Password:"))
+        self.layout.addWidget(self.psw_input)
+
+        self.button_layout = QHBoxLayout()
+        self.button_layout.addWidget(self.ok_button)
+        self.button_layout.addWidget(self.cancel_button)
+        self.layout.addLayout(self.button_layout)
+        self.setLayout(self.layout)
+
+        self.ok_button.clicked.connect(self.accept)
+        self.cancel_button.clicked.connect(self.reject)
