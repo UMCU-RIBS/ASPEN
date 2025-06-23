@@ -117,6 +117,7 @@ class LdapLogin(QDialog):
         self.cancel_button = QPushButton("Cancel")
 
         self.layout = QVBoxLayout()
+        self.layout.addWidget(QLabel("Login with your RIBS account."))
         self.layout.addWidget(QLabel("Username:"))
         self.layout.addWidget(self.usr_input)
         self.layout.addWidget(QLabel("Password:"))
