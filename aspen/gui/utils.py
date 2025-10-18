@@ -11,13 +11,13 @@ from aspen.gui.models import FilesWidget
 TASKNAMES_MORE_PARMS = ["MultiClassScreening"]
 
 # for specified parameters we want to change the isDisabled value to True.
-PARAMETERS_DISABLE_TRUE = ["RunsParadigm", "RunsAlternative Name", "RunsNumber Classes", "RunsClasses"]
+PARAMETERS_DISABLE_TRUE = ["RunsParadigm", "RunsNumber Classes", "RunsClasses"]
 
 # Fields that will be hidden for session type == 'bci'
 PARAMETERS_DISABLE_FOR_SESSION_BCI = ['Xelo Stem', 'Date of Surgery']
 
 # Fields that will be hidden for all session types
-PARAMETERS_DISABLE_FOR_SESSION_ALL = ['Xelo Stem']
+PARAMETERS_DISABLE_FOR_SESSION_ALL = ['Xelo Stem', 'Alternative Name']
 
 
 def _protocol_name(protocol):
