@@ -307,6 +307,15 @@ class Run(Table_with_files):
         if not query.exec():
             raise ValueError(query.lastError().text())
 
+    def add_mode(self, mode_input: str):  # ASP-174 Adding an insert to allowed_values for Mode through add> new Mode.
+        query = QSqlQuery(self.db['db'])
+        query.prepare(
+            "INSERT INTO allowed_values (`table_name`, `column_name`, `allowed_value`) VALUES ('runs', 'mode', :value)")
+        query.bindValue(':value', mode_input)
+
+        if not query.exec():
+            raise ValueError(query.lastError().text())
+
     @property
     def events(self):
         dtypes = get_dtypes(self.db['tables']['events'])

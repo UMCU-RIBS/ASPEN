@@ -88,6 +88,11 @@ def create_menubar(main):
     action.triggered.connect(main.new_mental_strategy)
     menu_new.addAction(action)
 
+    # ASP-174 Adding a new option to expand the Mode under runs > Mode.
+    action = QAction('new Mode ...', main)
+    action.triggered.connect(main.new_mode)
+    menu_new.addAction(action)
+
     # Edit
     menu_edit = menubar.addMenu('Edit')
     menu_new.addSeparator()

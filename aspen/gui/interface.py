@@ -83,7 +83,6 @@ from .modal import (
     Popup_IntendedFor,
     CompareEvents,
     CalculateOffset,
-    parse_accessdatabase,
     )
 
 from .config import load_config, Ldap, LdapLogin
@@ -1304,6 +1303,28 @@ class Interface(QMainWindow):
             _throw_msg_box('Warning!', "Value can't be empty.")
         else:
             current_run.add_mental_strategy(str(text))
+            self.modified()
+            self.list_params()
+
+    @editor_rights
+    def new_mode(self, *args, **kwargs):  # ASP-174 Allowing for a Mode additions runs.mode
+        current_run = self.current('runs')
+        mode_values_db = lookup_allowed_values(self.db['db'], 'runs', 'mode')
+        text, ok = '', None
+
+        text, ok = QInputDialog.getText(
+            self,
+            'Enter a new Mode',
+            'Enter a unique value to appear under Mode.',
+            text=text,
+        )
+
+        if text in mode_values_db:
+            _throw_msg_box('Warning!', "Your input already exists, only new entries will be allowed.")
+        elif text is None or text == '':
+            _throw_msg_box('Warning!', "Value can't be empty.")
+        else:
+            current_run.add_mode(str(text))
             self.modified()
             self.list_params()
 
