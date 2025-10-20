@@ -12,10 +12,8 @@ from PyQt5.QtWidgets import (
     QDateEdit,
     QDateTimeEdit,
     QDialog,
-    QDockWidget,
     QGroupBox,
     QFileDialog,
-    QHBoxLayout,
     QInputDialog,
     QLineEdit,
     QListWidget,
@@ -1286,6 +1284,28 @@ class Interface(QMainWindow):
             subject.codes = [x.strip() for x in text.split(',')]
             self.list_subjects()
             self.modified()
+
+    @editor_rights
+    def new_mental_strategy(self, *args, **kwargs):  # ASP-167 Allowing for mental_strategy additions in runs.mental_strategy
+        current_run = self.current('runs')
+        mental_strategy_values_db = lookup_allowed_values(self.db['db'], 'runs', 'mental_strategy')
+        text, ok = '', None
+
+        text, ok = QInputDialog.getText(
+            self,
+            'Enter a new Mental Strategy',
+            'Enter a unique value to appear under Mental Strategy.',
+            text=text,
+        )
+
+        if text in mental_strategy_values_db:
+            _throw_msg_box('Warning!', "Your input already exists, only new entries will be allowed.")
+        elif text is None or text == '':
+            _throw_msg_box('Warning!', "Value can't be empty.")
+        else:
+            current_run.add_mental_strategy(str(text))
+            self.modified()
+            self.list_params()
 
     @editor_rights
     def new_file(self, checked=None, filename=None, *args, **kwargs):

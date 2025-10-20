@@ -299,6 +299,14 @@ class Run(Table_with_files):
         recording = Recording(self.db, recording_id, run=self)
         return recording
 
+    def add_mental_strategy(self, mental_strategy_input: str):  # ASP-167 Adding an insert to allowed_values for mental strategy through add>new Mental Strategy
+        query = QSqlQuery(self.db['db'])
+        query.prepare("INSERT INTO allowed_values (`table_name`, `column_name`, `allowed_value`) VALUES ('runs', 'mental_strategy', :value)")
+        query.bindValue(':value', mental_strategy_input)
+
+        if not query.exec():
+            raise ValueError(query.lastError().text())
+
     @property
     def events(self):
         dtypes = get_dtypes(self.db['tables']['events'])

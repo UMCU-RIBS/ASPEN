@@ -83,6 +83,11 @@ def create_menubar(main):
     action.triggered.connect(main.new_file)
     menu_new.addAction(action)
 
+    # ASP-167 Adding a new option to expand the mental strategy list under runs > mental strategy
+    action = QAction('new Mental Strategy ...', main)
+    action.triggered.connect(main.new_mental_strategy)
+    menu_new.addAction(action)
+
     # Edit
     menu_edit = menubar.addMenu('Edit')
     menu_new.addSeparator()
