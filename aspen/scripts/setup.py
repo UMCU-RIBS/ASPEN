@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='aspen',
-    version='1.0.3',
+    version='1.0.4',
     description='Database GUI',
     url='https://github.com/umcu-ribs/aspen',
     author="Gio Piantoni, Erdi Erdal",
