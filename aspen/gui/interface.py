@@ -86,6 +86,7 @@ from .modal import (
     )
 
 from .config import load_config, Ldap, LdapLogin
+from aspen import __version__
 
 # XEL-71
 INACTIVE_TASKS = ['abled', 'action_selection', 'animal', 'angiography_scan', 'audcomsent', 'audcomword',
@@ -174,7 +175,7 @@ class Interface(QMainWindow):
         self.ldap.close()
         if self.current_user_rights is None:
             _throw_msg_box(
-                "Welcome to Aspen",
+                f"Welcome to Aspen {__version__}",
                 f"Hi {self.current_user.capitalize()} you have no access to Aspen (yet). Contact the maintainers"
                 f" if you need access. Aspen will now close."
             )
@@ -364,7 +365,7 @@ class Interface(QMainWindow):
 
         if self.current_user_rights is not None:
             _throw_msg_box(
-                "Welcome to Aspen",
+                f"Welcome to Aspen {__version__}",
                 f"Hi {self.current_user.capitalize()} you are logged in with {self.current_user_rights} rights. "
                 f"\n You can do the following: \n{self.user_actions}",
                 msg_type="OK")
@@ -861,7 +862,8 @@ class Interface(QMainWindow):
             d['sessions'] = sess.name
         d['run_id'] = run.id
         d['runs'] = f'{run.task_name}'
-        d['start_time'] = f'{run.start_time:%d %b %Y %H:%M:%S}'
+        # d['start_time'] = f'{run.start_time:%d %b %Y %H:%M:%S}'
+        d['start_time'] = f'N/A'
         self.exports.append(d)
 
         self.list_exports()

@@ -7,6 +7,7 @@ from ldap3 import Server, Connection, ALL, SIMPLE
 from pathlib import Path
 
 from ldap3.core.exceptions import LDAPBindError
+from aspen import __version__
 
 
 def load_config() -> {}:
@@ -109,7 +110,7 @@ class LdapLogin(QDialog):
     # ASP-124 Making a dedicated Qdialog login screen for users to enter their username and password for LDAP auth
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Welcome to Aspen")
+        self.setWindowTitle(f"Welcome to Aspen {__version__}")
         self.usr_input = QLineEdit()
         self.psw_input = QLineEdit()
         self.psw_input.setEchoMode(QLineEdit.Password)
