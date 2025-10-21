@@ -1,8 +1,9 @@
 from setuptools import setup, find_packages
+from aspen import __version__
 
 setup(
     name='aspen',
-    version='1.0.5',
+    version=f'{__version__}',
     description='Database GUI',
     url='https://github.com/umcu-ribs/aspen',
     author="Gio Piantoni, Erdi Erdal",

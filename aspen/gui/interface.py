@@ -146,7 +146,7 @@ class Interface(QMainWindow):
         self.ldap = Ldap()
         self.current_user = self.ldap.current_user
 
-        self.ldap_login = LdapLogin()
+        self.ldap_login = LdapLogin(self.current_user)
         if self.ldap_login.exec_() == QDialog.Rejected:
             sys.exit(1)  # Close Aspen if rejected
 

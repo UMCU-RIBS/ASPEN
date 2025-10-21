@@ -108,10 +108,11 @@ class Ldap:
 class LdapLogin(QDialog):
     """A QDialog class that provides a simple login screen."""
     # ASP-124 Making a dedicated Qdialog login screen for users to enter their username and password for LDAP auth
-    def __init__(self):
+    def __init__(self, current_user: str):
         super().__init__()
         self.setWindowTitle(f"Welcome to Aspen {__version__}")
         self.usr_input = QLineEdit()
+        self.usr_input.setText(current_user)  # ASP-176 Pre-set the username that we know
         self.psw_input = QLineEdit()
         self.psw_input.setEchoMode(QLineEdit.Password)
         self.ok_button = QPushButton("Login")
