@@ -356,7 +356,7 @@ def _datetime(s):
     if s is None:
         return 'null'
     else:
-        return '"' + f'{s:%Y-%m-%dT%H:%M:%S.%f}'[:-3] + '"'
+        return '"' + f'{s:%Y-%m-%d %H:%M:%S.%f}'[:-3] + '"'  # ASP-36 bugfix for time notation in mariadb
 
 
 def _create_query(row):
