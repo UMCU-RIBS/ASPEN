@@ -86,7 +86,7 @@ from .modal import (
     )
 
 from .config import load_config, Ldap, LdapLogin
-from aspen import __version__
+from aspen import __version__, __changelog__
 
 # XEL-71
 INACTIVE_TASKS = ['abled', 'action_selection', 'animal', 'angiography_scan', 'audcomsent', 'audcomword',
@@ -367,7 +367,9 @@ class Interface(QMainWindow):
             _throw_msg_box(
                 f"Welcome to Aspen {__version__}",
                 f"Hi {self.current_user.capitalize()} you are logged in with {self.current_user_rights} rights. "
-                f"\n You can do the following: \n{self.user_actions}",
+                f"\n You can do the following: \n"
+                f"{self.user_actions} \n \n"
+                f"Changelog {__changelog__}",
                 msg_type="OK")
         else:
             sys.exit(1)
@@ -794,7 +796,6 @@ class Interface(QMainWindow):
                 x = None
             else:
                 x = f'{x}'
-
         setattr(obj, column, x)
         self.modified()
 
