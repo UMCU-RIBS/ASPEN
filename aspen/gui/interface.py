@@ -33,6 +33,7 @@ from PyQt5.QtWidgets import (
     QLabel,
     QTabWidget,
     QGridLayout,
+    QHeaderView,
 )
 from PyQt5.QtGui import (
     QBrush,
@@ -212,6 +213,9 @@ class Interface(QMainWindow):
         t_params.setColumnCount(3)
         t_params.setHorizontalHeaderLabels(['Level', 'Parameter', 'Value'])
         t_params.verticalHeader().setVisible(False)
+        parameter_header = t_params.horizontalHeader()  # ASP-190
+        parameter_header.setSectionResizeMode(1, QHeaderView.ResizeToContents)  # ASP-190
+
 
         # EVENTS: Widget
         self.events_view = QTableView(self)
