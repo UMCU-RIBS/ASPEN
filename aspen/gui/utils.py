@@ -7,17 +7,15 @@ from PyQt5.QtWidgets import QSpinBox, QMessageBox, QTableWidget
 from aspen.api.utils import sort_data_created
 from aspen.gui.models import FilesWidget
 
-# Runs with the Specified Task Name that need extra parameters filled in for an alternative namechange
-TASKNAMES_MORE_PARMS = ["MultiClassScreening"]
 
-# for specified parameters we want to change the isDisabled value to True.
-PARAMETERS_DISABLE_TRUE = []
-
-# Fields that will be hidden for session type == 'bci'
-PARAMETERS_DISABLE_FOR_SESSION_BCI = ['Xelo Stem', 'Date of Surgery']
-
-# Fields that will be hidden for all session types
-PARAMETERS_DISABLE_FOR_SESSION_ALL = ['Xelo Stem', 'Alternative Name', 'Classes']
+TASKNAMES_MORE_PARMS = ["MultiClassScreening"]  # Runs with the Specified Task Name that need extra parameters filled in for an alternative namechange
+PARAMETERS_HIGHLIGHT_IMPORTANT = ['Application', 'Task Design', 'Number Classes', 'Mode', 'Mental Strategy']  # Param fields that need a highlight to showcase its importance
+PARAMETERS_HIGHLIGHT_CRITICAL = []  # Param fields that are critical
+PARAMETERS_DISABLE_TRUE = ['Entry Created', 'Added By']  # for specified parameters we want to change the isDisabled value to True.
+PARAMETERS_DISABLE_FOR_SESSION_BCI = ['Xelo Stem', 'Date of Surgery', 'ASCA Score', 'Battery Level', 'Mood', 'Motivation', 'Tiredness Pre', 'Tiredness Post']  # Fields that will be hidden for session type == 'bci'
+PARAMETERS_DISABLE_FOR_SESSION_ALL = ['Xelo Stem', 'Alternative Name', 'Classes', 'Modified By', 'Modified Date', 'Effort']  # Fields that will be hidden for all session types
+COLOR_HIGHLIGHT_LIGHT_GREEN: QColor = QColor(0, 255, 0, 50)
+COLOR_HIGHLIGHT_GRAY: QColor = QColor(80, 70, 70, 50)
 
 
 def _protocol_name(protocol):
@@ -120,7 +118,7 @@ def _calculate_age(date_of_birth: QDate, date_to_compare: QDate) -> int:
 
 # ASP-63 Added a util function to update a field-param value for further usages
 def _update_parm(value: int, target_widget: QSpinBox):
-    """Function to update value on a QLineEdit widget under the parameters. Value needs to be an int with how QSpinbox
+    """Function to update value on a QSpinBox widget under the parameters. Value needs to be an int with how QSpinbox
     is working.
     :param value: Value in int as QSpinbox expects an int for setValue.
     :param target_widget: target widget of type QSpinBox for which the change is intended."""
@@ -168,17 +166,17 @@ def _update_visual_parameters_table(table: QTableWidget):
     take into consideration different colors or enabling/disabling parameters.color
     row0 = level, row1=parameter, row2=value"""
     for row in range(table.rowCount()):
-        if table.item(row, 1).text() == "Task Name" and table.cellWidget(row, 2).currentText() in TASKNAMES_MORE_PARMS:
-            # If the above is true we do not want to disable the parameters in 'PARAMETERS_DISABLE_TRUE'
-            return
-        elif table.item(row, 0).text() + table.item(row, 1).text() in PARAMETERS_DISABLE_TRUE:
+        if table.item(row, 1).text() in PARAMETERS_HIGHLIGHT_IMPORTANT:
+            table.item(row, 1).setBackground(COLOR_HIGHLIGHT_GRAY)
+
+        elif table.item(row, 1).text() in PARAMETERS_DISABLE_TRUE:  # No disable tags currently
             table.item(row, 0).setFlags(Qt.ItemIsSelectable)
             table.item(row, 1).setFlags(Qt.ItemIsSelectable)
             table.cellWidget(row, 2).setDisabled(True)
 
 
 # ASP-107 This function will visually connect the channel items with the corresponding file item
-def _mark_channel_file_visual(recording_files: FilesWidget, channels: [], params: Any, channels_listed: Any) -> None:
+def _mark_channel_file_visual(recording_files: FilesWidget, channels: list, params: Any, channels_listed: Any) -> None:
     """Filter on dates 2025 and onwards. will check if the path under files and the based_on_file under channel_group
     have any matches, if it does it will mark both of them visually. It will mark any of the non-matching channel
     entries to disable and be non-interactable."""
@@ -231,7 +229,7 @@ def _iterate_filewidget_actions(file_widget: FilesWidget, check_list: set, chang
             file_widget.item(row, 2).setForeground(QColor(255, 0, 0, 127))
 
 
-def _iterate_channels_actions(channels: [], channels_listed: Any, check_list: set, change_color: QColor) -> None:
+def _iterate_channels_actions(channels: list, channels_listed: Any, check_list: set, change_color: QColor) -> None:
     """Generic internal function to take a list of channels and iterate through the items inside the widget with the
      option to check if some of its values are present in a set as comparison. It will also allow for an action, such as
      changing the color of the item."""
