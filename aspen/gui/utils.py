@@ -3,7 +3,7 @@ from typing import Union, Any
 
 from PyQt5.QtCore import QDate, Qt
 from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QSpinBox, QMessageBox, QTableWidget
+from PyQt5.QtWidgets import QSpinBox, QMessageBox, QTableWidget, QLineEdit
 from aspen.api.utils import sort_data_created
 from aspen.gui.models import FilesWidget
 
@@ -294,6 +294,14 @@ def get_table_items(table_widget):
                 row_data.append("")  # If the cell is empty
         items.append(row_data)
     return items
+
+
+def update_parm_qline_edit(value: str = None, widget: QLineEdit = None) -> None:
+    """Function to update value on a QLineEdit widget under the parameters.
+       :param value: Value as str for setText.
+       :param widget: target widget of type QLineEdit for which the change is intended."""
+    if widget is not None and value is not None:
+        widget.setText(value)
 
 
 def admin_rights(func):

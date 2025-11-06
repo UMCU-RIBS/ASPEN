@@ -74,7 +74,8 @@ from .models import FilesWidget, EventsModel
 from .utils import (
     _protocol_name, _name, _session_name, guess_modality, _sort_session_bci, _check_session_bci,
     _session_bci_hide_fields, _check_change_age, _throw_msg_box, _update_visual_parameters_table,
-    _mark_channel_file_visual, get_fp_rec_file, admin_rights, editor_rights, _all_session_types_hide_fields
+    _mark_channel_file_visual, get_fp_rec_file, admin_rights, editor_rights, _all_session_types_hide_fields,
+    update_parm_qline_edit
     )
 from .modal import (
     NewFile,
@@ -345,7 +346,7 @@ class Interface(QMainWindow):
         self.t_files = t_files
         self.t_export = t_export
         self.exports = []
-
+        self.modified_by = None
         self.search = Search()
 
         self.statusBar()
@@ -608,6 +609,8 @@ class Interface(QMainWindow):
 
             parameters = {}
             parameters.update(list_parameters(self, obj))
+            if 'Modified By' in parameters:
+                self.modified_by = parameters['Modified By']
 
             # ASP-63 We need a small reference when checking parms to corresponding fields. When found connect slots.
             if 'Age' in parameters:
@@ -717,7 +720,6 @@ class Interface(QMainWindow):
         self.modified()
 
     def current(self, level):
-
         item = self.lists[level].currentItem()
         if item is not None:
             return item.data(Qt.UserRole)
@@ -801,6 +803,7 @@ class Interface(QMainWindow):
             else:
                 x = f'{x}'
         setattr(obj, column, x)
+        update_parm_qline_edit(self.current_user, self.modified_by)
         self.modified()
 
     def show_events(self, item):
@@ -1246,7 +1249,7 @@ class Interface(QMainWindow):
                 self.list_sessions_and_protocols(current_subject)
 
             elif level == 'runs':
-                current_session.add_run(text)
+                current_session.add_run(text, self.current_user)
                 self.list_runs(current_session)
 
             elif level == 'recordings':

@@ -246,12 +246,17 @@ class Session(Table_with_files):
         elec_ids = list_channels_electrodes(self.db, self.id, name='electrode')
         return [Electrodes(self.db, id=id_) for id_ in elec_ids]
 
-    def add_run(self, task_name):
-
+    def add_run(self, task_name, current_user: str = None):
         query = QSqlQuery(self.db['db'])
-        query.prepare("INSERT INTO runs (`session_id`, `task_name`) VALUES (:id, :task_name)")
-        query.bindValue(':id', self.id)
-        query.bindValue(':task_name', task_name)
+        if current_user is not None:
+            query.prepare("INSERT INTO runs (`session_id`, `task_name`, `added_by`) VALUES (:id, :task_name, :user)")
+            query.bindValue(':id', self.id)
+            query.bindValue(':task_name', task_name)
+            query.bindValue(':user', current_user)
+        else:
+            query.prepare("INSERT INTO runs (`session_id`, `task_name`) VALUES (:id, :task_name)")
+            query.bindValue(':id', self.id)
+            query.bindValue(':task_name', task_name)
         if not query.exec():
             raise ValueError(query.lastError().text())
 
