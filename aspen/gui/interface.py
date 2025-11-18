@@ -1642,7 +1642,7 @@ def list_parameters(parent, obj):
                 w.currentTextChanged.connect(partial(parent.changed, obj, col))
             else:
                 w = make_edit(value)
-                w.editingFinished.connect(partial(parent.changed, obj, col, w))
+                w.textChanged.connect(partial(parent.changed, obj, col, w))  # ASP-146 to also track changes programatically
 
         else:
             raise ValueError(f'unknown type "{col_info["type"]}"')
