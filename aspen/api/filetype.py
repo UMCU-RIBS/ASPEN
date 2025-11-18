@@ -1,4 +1,5 @@
 from pathlib import Path
+from ..gui.utils import _throw_msg_box
 
 
 def parse_filetype(file_path):
@@ -27,6 +28,11 @@ def parse_filetype(file_path):
 
     elif suffix == '.nev':
         data_type = 'blackrock'
+
+    elif suffix in ('.ns1', '.ns2', '.ns3', '.ns4', '.ns5', '.ns6', '.ns7', '.ns8', '.ns9',):  # ASP-194 unsupported
+        _throw_msg_box("Unsupported filetype detected!",
+                       ".ns(1-9) files no longer supported please use .nev files")
+        data_type = 'unsupported'
 
     elif suffix == '.pdf':
         data_type = 'pdf'

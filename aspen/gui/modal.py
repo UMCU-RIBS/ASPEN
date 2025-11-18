@@ -27,7 +27,7 @@ from numpy import issubdtype, floating, integer
 from .utils import _protocol_name
 from ..api.filetype import parse_filetype
 from ..api.frontend import list_experimenters
-from ..database.tables import LEVELS, lookup_allowed_values
+from ..database.tables import lookup_allowed_values
 from ..io.ephys import read_info_from_ephys
 from ..io.utils import localize_blackrock
 from ..io.events import read_events_from_ephys
@@ -41,7 +41,7 @@ class NewFile(QDialog):
         self.setWindowModality(Qt.WindowModal)
 
         self.level = QComboBox()
-        self.level.addItems([level[:-1].capitalize() for level in LEVELS])
+        self.level.addItems([level[:-1].capitalize() for level in ['recordings', 'subjects', 'sessions', 'protocols', 'runs']])
 
         if level_obj is not None:
             self.level.setEnabled(False)  # do not allow changing level here
@@ -73,7 +73,7 @@ class NewFile(QDialog):
 
         # ASP-101 Create a simple list that contains the fileExtensions that are bound to a recording level.
         # ASP-82 Addition of wave to recordings
-        self.file_extensions_recording: () = ('parrec', 'nifti', 'bci2000', 'micromed', 'blackrock', 'dicom', 'wave')
+        self.file_extensions_recording: tuple = ('parrec', 'nifti', 'bci2000', 'micromed', 'blackrock', 'dicom', 'wave')
 
         if file_obj is not None:
             # self.level.setCurrentText(file_obj)
@@ -100,12 +100,12 @@ class NewFile(QDialog):
         try:
             filetype = parse_filetype(filename)
 
-            # ASP-101 Set level to recording if any datatype is found in list (of recording filetypes).
-            if filetype in self.file_extensions_recording:
+            if filetype in self.file_extensions_recording:  # ASP-101 Set level to recording if any datatype is found in list (of recording filetypes).
                 self.level.setCurrentText('Recording')
-            # ASP-101 Same for PDF, which is always protocol.
-            elif filetype == 'pdf':
+            elif filetype == 'pdf':  # ASP-101 Same for PDF, which is always protocol.
                 self.level.setCurrentText('Protocol')
+            elif filetype == 'unsupported':  # ASP-194 Adding a closeout if an 'unsupported' is provided for not allowed
+                self.reject()
 
         except ValueError as err:
             lg.debug(err)
