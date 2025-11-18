@@ -917,11 +917,11 @@ class Interface(QMainWindow):
         menu.popup(view.mapToGlobal(pos))
 
     def tsv_import(self, table):
-
+        run = None
         tsv_file = QFileDialog.getOpenFileName(
             self,
             f"Import {table} from file",
-            None,
+            '',
             "Tab-separated values (*.tsv)")[0]
 
         if tsv_file == '':
@@ -1096,7 +1096,6 @@ class Interface(QMainWindow):
         self.list_subjects()
 
     def add_search_results_to_export(self):
-
         for subj_id, sess_id, run_id in zip(self.search.subjects, self.search.sessions, self.search.runs):
             self.exporting(
                 subj=Subject(self.db, id=subj_id),
@@ -1152,6 +1151,7 @@ class Interface(QMainWindow):
     @editor_rights
     def new_item(self, checked=None, level=None, *args, **kwargs):
         ok, text = None, None  # ASP-113 ok and text could be reached before creation
+        current_subject, current_session, current_run, current_recording = None, None, None, None
         if level == 'subjects':
             text, ok = QInputDialog.getText(
                 self,
