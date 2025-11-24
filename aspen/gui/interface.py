@@ -123,6 +123,8 @@ FILTER_TASKS = INACTIVE_TASKS
 FILTER_TASKS.extend(NO_MANAGER_TASKS)
 FILTER_TASKS.extend(UNKNOWN_TASKS)
 
+# ASP-202 different highlight color for default/unfilled values
+HIGHLIGHT_DEFAULT_VALUE_ORANGE = QColor(255, 165, 8)
 
 EXTRA_LEVELS = ['channels', 'electrodes']
 NULL_TEXT = 'Unknown / Unspecified'
@@ -1663,18 +1665,17 @@ def make_edit(value):
 
 def make_integer(value):
     w = QSpinBox()
-    # w.setRange(-2e7, 2e7)
+    w.setMinimum(-1)
+    w.setSpecialValueText("-")  # ASP-201 Changing the default value for display
+    w.setValue(-1)
     w.wheelEvent = lambda event: None  # ASP-72 disable scrolling for Qspinbox events
 
     if value is None:
-        w.setValue(0)
         palette = QPalette()
-        palette.setColor(QPalette.Text, Qt.red)
+        palette.setColor(QPalette.Text, HIGHLIGHT_DEFAULT_VALUE_ORANGE)  # ASP-202 color change
         w.setPalette(palette)
-
     else:
         w.setValue(value)
-
     return w
 
 
@@ -1682,12 +1683,13 @@ def make_float(value):
     w = QDoubleSpinBox()
     w.setDecimals(3)
     w.setRange(-1e8, 1e8)
+    w.setSpecialValueText("-")  # ASP-201 Changing the default value for display
+    w.setValue(-1e8)
     w.wheelEvent = lambda event: None  # ASP-72 disable scrolling for Qspinbox events
 
     if value is None:
-        w.setValue(0)
         palette = QPalette()
-        palette.setColor(QPalette.Text, Qt.red)
+        palette.setColor(QPalette.Text, HIGHLIGHT_DEFAULT_VALUE_ORANGE)  # ASP-202 color change
         w.setPalette(palette)
 
     else:
@@ -1696,7 +1698,6 @@ def make_float(value):
         except TypeError:
             print(value)
             print(type(value))
-
     return w
 
 
@@ -1739,9 +1740,9 @@ def make_date(value):
     w.setDisplayFormat('yyyy-MM-dd')  # ASP-115 Streamlining same format for dates
     w.wheelEvent = lambda event: None  # ASP-72 disable scrolling for QDate events
     if value is None:
-        w.setDate(date(1900, 1, 1))
+        w.setDate(date(1970, 1, 1))
         palette = QPalette()
-        palette.setColor(QPalette.Text, Qt.red)
+        palette.setColor(QPalette.Text, HIGHLIGHT_DEFAULT_VALUE_ORANGE)  # ASP-202 color change
         w.setPalette(palette)
     else:
         w.setDate(value)
@@ -1755,9 +1756,9 @@ def make_datetime(value):
     w.setDisplayFormat('yyyy-MM-dd HH:mm')  # ASP-115 Streamlining same format for dates and removal of seconds
     w.wheelEvent = lambda event: None  # ASP-72 disable scrolling for QDateTime events
     if value is None:
-        w.setDateTime(datetime(1900, 1, 1, 0, 0))
+        w.setDateTime(datetime(1970, 1, 1, 0, 0))
         palette = QPalette()
-        palette.setColor(QPalette.Text, Qt.red)
+        palette.setColor(QPalette.Text, HIGHLIGHT_DEFAULT_VALUE_ORANGE)  # ASP-202 color change
         w.setPalette(palette)
     else:
         w.setDateTime(value)

@@ -1,7 +1,11 @@
-__version__ = "1.0.11"
+__version__ = "1.0.12"
 
 
 __changelog__ = (
+    "\n v1.0.12: \n"
+    "- Standard unfilled value color red --> orange \n "
+    "- Standard unfilled value text 0 --> '-'  \n"
+
     "\n v1.0.11: \n"
     "- Dropped support for .ns1 to .ns9 \n "
     "- New file starts on level 'Recording' instead of 'Subject'. \n"
@@ -11,13 +15,13 @@ __changelog__ = (
     
     "\n v1.0.9: \n"
     "Calculate age at start time of run if filled in. \n "
-    
-    "\n v1.0.8: \n"
-    "UI change to display parameter names without cutting off due to strecht properties. \n"
-
 )
 
 __full_changelog__ = (
+    "\n v1.0.12: \n"
+    "- Standard unfilled value color red --> orange \n "
+    "- Standard unfilled value text 0 --> '-'  \n"
+    
     "\n v1.0.11: \n"
     "- Dropped support for .ns1 to .ns9 \n "
     "- New file starts on level 'Recording' instead of 'Subject'. \n"
