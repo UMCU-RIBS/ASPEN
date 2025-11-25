@@ -1,7 +1,10 @@
-__version__ = "1.0.12"
+__version__ = "1.0.13"
 
 
 __changelog__ = (
+    "\n v1.0.13: \n"
+    "BCI sessions no longer see the fields Distance to screen, Task Codes and Task Logs under parameters>runs \n "
+    
     "\n v1.0.12: \n"
     "- Standard unfilled value color red --> orange \n "
     "- Standard unfilled value text 0 --> '-'  \n"
@@ -18,6 +21,9 @@ __changelog__ = (
 )
 
 __full_changelog__ = (
+    "\n v1.0.13: \n"
+    "BCI sessions no longer see the fields Distance to screen, Task Codes and Task Logs under parameters>runs \n "
+    
     "\n v1.0.12: \n"
     "- Standard unfilled value color red --> orange \n "
     "- Standard unfilled value text 0 --> '-'  \n"
