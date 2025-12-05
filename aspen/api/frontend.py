@@ -121,7 +121,6 @@ class Subject(Table_with_files):
 
     @codes.setter
     def codes(self, codes):
-
         query = QSqlQuery(self.db['db'])
         query.prepare('DELETE FROM subject_codes WHERE subject_id = :id')
         query.bindValue(':id', self.id)
@@ -137,7 +136,6 @@ class Subject(Table_with_files):
                 raise SyntaxError(query.lastError().text())
 
     def add_session(self, name):
-
         query = QSqlQuery(self.db['db'])
         query.prepare("INSERT INTO sessions (`subject_id`, `name`) VALUES (:id, :name)")
         query.bindValue(':id', self.id)
@@ -164,7 +162,6 @@ class Subject(Table_with_files):
         return sorted(list_of_sessions, key=sort_starttime)
 
     def add_protocol(self, METC):
-
         query = QSqlQuery(self.db['db'])
         query.prepare("INSERT INTO protocols (`subject_id`, `metc`) VALUES (:id, :metc)")
         query.bindValue(':id', self.id)
@@ -237,7 +234,6 @@ class Session(Table_with_files):
         return sorted(list_of_runs, key=sort_starttime)
 
     def list_channels(self):
-
         chan_ids = list_channels_electrodes(self.db, self.id, name='channel')
         return [Channels(self.db, id=id_) for id_ in chan_ids]
 
@@ -276,7 +272,6 @@ class Run(Table_with_files):
         return f'<{self.t} (#{self.id})>'
 
     def list_recordings(self):
-
         query = QSqlQuery(self.db['db'])
         query.prepare("SELECT recordings.id FROM recordings WHERE recordings.run_id = :id")
         query.bindValue(':id', self.id)
@@ -291,7 +286,6 @@ class Run(Table_with_files):
         return sorted(list_of_recordings, key=lambda obj: obj.modality)
 
     def add_recording(self, modality):
-
         query = QSqlQuery(self.db['db'])
         query.prepare("INSERT INTO recordings (`run_id`, `modality`) VALUES (:id, :modality)")
         query.bindValue(':id', self.id)

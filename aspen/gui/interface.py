@@ -75,7 +75,7 @@ from .utils import (
     _protocol_name, _name, _session_name, guess_modality, _sort_session_bci, _check_session_bci,
     _session_bci_hide_fields, _check_change_age, _throw_msg_box, _update_visual_parameters_table,
     _mark_channel_file_visual, get_fp_rec_file, admin_rights, editor_rights, _all_session_types_hide_fields,
-    update_parm_qline_edit
+    update_parm_qline_edit, update_experimenter_inside_session, extract_file_name_properties
     )
 from .modal import (
     NewFile,
@@ -146,6 +146,7 @@ class Interface(QMainWindow):
         self.events_model = None
         self.all_current_params = None
         self.current_user_rights = None
+        self.dict_run_params = None
         self.config = load_config()
         self.ldap = Ldap()
         self.current_user = self.ldap.current_user
@@ -626,8 +627,8 @@ class Interface(QMainWindow):
 
             if _check_session_bci(current_session_name):  # ASP-64 Check if dealing with BCI-session, clear the params
                 _session_bci_hide_fields(parameters)
-            # ASP-123 We want to hide certain fields for all sessions, so we can remove the 'bci-only' check
-            _all_session_types_hide_fields(parameters)
+
+            _all_session_types_hide_fields(parameters)  # ASP-123 We want to hide certain fields for all sessions, so we can remove the 'bci-only' check
 
             if k == 'runs':
                 w = Popup_Experimenters(obj, self)
@@ -637,18 +638,18 @@ class Interface(QMainWindow):
                 if obj.task_name == 'top_up':
                     w = Popup_IntendedFor(obj, self)
                     parameters.update({'Intended For': w})
+                self.dict_run_params = parameters
 
             elif k == 'recordings':
-
                 if obj.modality in ('ieeg', 'eeg', 'meg'):
                     parameters.update(list_parameters(self, obj))
-
                     sess = self.current('sessions')
-
                     w = QComboBox()  # add callback here
                     w.addItem('(undefined channels)', None)
+
                     for chan in sess.list_channels():
                         w.addItem(_name(chan.name), chan)
+
                     channels = obj.channels
                     if channels is None:
                         w.setCurrentText('')
@@ -659,8 +660,10 @@ class Interface(QMainWindow):
 
                     w = QComboBox()
                     w.addItem('(undefined electrodes)', None)
+
                     for elec in sess.list_electrodes():
                         w.addItem(_name(elec.name), elec)
+
                     electrodes = obj.electrodes
                     if electrodes is None:
                         w.setCurrentText('')
@@ -674,7 +677,7 @@ class Interface(QMainWindow):
                     'level': self.groups[k].title(),
                     'parameter': p_k,
                     'value': p_v,
-                    })
+                })
         self.all_current_params = all_params  # ASP-107 quick save of all the params
         self.t_params.setRowCount(len(all_params))
 
@@ -954,7 +957,7 @@ class Interface(QMainWindow):
         tsv_file = QFileDialog.getSaveFileName(
             self,
             f"Save {table} to file",
-            None,
+            '',
             "Tab-separated values (*.tsv)")[0]
 
         if tsv_file == '':
@@ -1080,7 +1083,6 @@ class Interface(QMainWindow):
         QDesktopServices.openUrl(url_file)
 
     def sql_search(self):
-
         text, ok = QInputDialog.getText(
             self,
             'Search the database',
@@ -1351,10 +1353,10 @@ class Interface(QMainWindow):
             format_file = get_new_file.format.currentText()
             path = get_new_file.filepath.text()
 
-            # ASP-102 Providing a bit more information to the user if no recording can be found.
-            if item is None:
+            if item is None:  # ASP-102 Providing a bit more information to the user if no recording can be found.
                 _throw_msg_box('Warning!', "Please add a Recording, before you add recording file(s).")
             else:  # ASP-102 only add the file and list_files()/modified() if item is not None, prevent XCB error
+                extract_file_name_properties(self, path)
                 item.add_file(format_file, path)
                 self.list_files()
                 self.modified()

@@ -1,7 +1,11 @@
-__version__ = "1.0.13"
+__version__ = "1.0.14"
 
 
 __changelog__ = (
+    "\n v1.0.14: \n"
+    "Auto collect tags from filenames to fill in parameter>runs. Filenames should follow this principle "
+    "'PatientName_app_taskDesign_numClasses_taskname_mode_mentalStrategy_[no longer relevant]date_etc.filetype' \n "
+    
     "\n v1.0.13: \n"
     "BCI sessions no longer see the fields Distance to screen, Task Codes and Task Logs under parameters>runs \n "
     
@@ -15,12 +19,14 @@ __changelog__ = (
     
     "\n v1.0.10: \n"
     "Added By and Modified By are now automatically doing its tracking on the database. \n "
-    
-    "\n v1.0.9: \n"
-    "Calculate age at start time of run if filled in. \n "
+
 )
 
 __full_changelog__ = (
+    "\n v1.0.14: \n"
+    "Auto collect tags from filenames to fill in parameter>runs. Filenames should follow this principle "
+    "'PatientName_app_taskDesign_numClasses_taskname_mode_mentalStrategy_[no longer relevant]date_etc.filetype' \n "
+    
     "\n v1.0.13: \n"
     "BCI sessions no longer see the fields Distance to screen, Task Codes and Task Logs under parameters>runs \n "
     

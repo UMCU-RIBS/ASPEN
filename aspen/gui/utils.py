@@ -1,3 +1,4 @@
+import os.path
 from functools import wraps
 from typing import Union, Any
 
@@ -5,6 +6,7 @@ from PyQt5.QtCore import QDate, Qt
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QSpinBox, QMessageBox, QTableWidget, QLineEdit
 from aspen.api.utils import sort_data_created
+from aspen.database import lookup_allowed_values
 from aspen.gui.models import FilesWidget
 
 
@@ -304,6 +306,38 @@ def update_parm_qline_edit(value: str = None, widget: QLineEdit = None) -> None:
        :param widget: target widget of type QLineEdit for which the change is intended."""
     if widget is not None and value is not None:
         widget.setText(value)
+
+
+def extract_file_name_properties(ref, file_path: str):
+    """Simple function to attempt filling in some params>runs>fields by reading the filename. This function assumes the
+    following file name structure 'PatientName_app_taskDesign_numClasses_task_mode_mentalStrategy_date.filetype'. The
+    function will assume this structure, filter out the name and then collect the 6 tags needed. It will however
+    discard the taskname as that will be filled in already through Aspen run creation."""
+    # ASP-168 auto extract info from filename and fill them in
+    _ = os.path.basename(file_path)  # filename = basename
+    _ = _.split('_')  # all 'elements' in filename split with _ in string
+    _ = _[1:7]  # name_RW_ER_6_MCS_NA_gestures_date -> [RW, ER, 6, MCS, NA, gestures]
+
+    app_map = {
+        "RW": "Redwood", "PT": "Palmtree", "PRES": "Presentation", "BCI2000": "BCI2000", "NA": "NA", "BOLT": "Bolt", "QT": "Qt-framework"
+    }
+    _values_mode = lookup_allowed_values(ref.db['db'], 'runs', 'mode')
+    _values_strategy = lookup_allowed_values(ref.db['db'], 'runs', 'mental_strategy')
+
+    if len(_) < 5:
+        print("file_name is incorrect stopping auto fill-in")
+        _throw_msg_box("file name inconsistent", "Can't extract info from filename, make sure it follows the guidelines")
+        return
+    if _[0] in ("RW", "PT", "BCI2000", "NA", "BOLT", "PRES"):  # application
+        ref.dict_run_params['Application'].setCurrentText(app_map[_[0]])
+    if _[1] in ("ER", "BD", "NA"):  # design
+        ref.dict_run_params['Task Design'].setCurrentText(_[1])
+    if _[2] is not None:  # num_class
+        ref.dict_run_params['Number Classes'].setValue(int(_[2]))
+    if _[4] in _values_mode:  # mode
+        ref.dict_run_params['Mode'].setCurrentText(_[4])
+    if _[5] in _values_strategy:  # mental_strategy
+        ref.dict_run_params['Mental Strategy'].setCurrentText(_[5])
 
 
 def admin_rights(func):
