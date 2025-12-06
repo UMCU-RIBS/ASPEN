@@ -13,7 +13,7 @@ from aspen.gui.models import FilesWidget
 TASKNAMES_MORE_PARMS = ["MultiClassScreening"]  # Runs with the Specified Task Name that need extra parameters filled in for an alternative namechange
 PARAMETERS_HIGHLIGHT_IMPORTANT = ['Application', 'Task Design', 'Number Classes', 'Mode', 'Mental Strategy']  # Param fields that need a highlight to showcase its importance
 PARAMETERS_HIGHLIGHT_CRITICAL = []  # Param fields that are critical
-PARAMETERS_DISABLE_TRUE = ['Entry Created', 'Added By']  # for specified parameters we want to change the isDisabled value to True.
+PARAMETERS_DISABLE_TRUE = ['Entry Created', 'Added By', 'Data Created']  # for specified parameters we want to change the isDisabled value to True.
 PARAMETERS_DISABLE_FOR_SESSION_BCI = ['Xelo Stem', 'Date of Surgery', 'ASCA Score', 'Battery Level', 'Mood',
                                       'Motivation', 'Tiredness Pre', 'Tiredness Post', 'Distance to screen',
                                       'Task Codes', 'Task Logs']  # Fields that will be hidden for session type == 'bci'
