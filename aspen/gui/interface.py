@@ -103,14 +103,15 @@ INACTIVE_TASKS = ['abled', 'action_selection', 'animal', 'angiography_scan', 'au
                   'sendkeys', 'threshold', 'touchy', 'smartbrain', 'soc_patterns', 'vardy_beeps', 'sternberg',
                   'movieben', 'verb_it', 'natural_rest', 'notask', 'noun', 'number', 'numerosity', 'noun'
                   'phonemes_and_jipjanneke', 'phonemes', 'vowels', 'visual_field_map', 'visual_left_right_map',
-                  'visual_speed_task', 'visual_task_serge', 'visual_attention', 'frontal_eye_field'
+                  'visual_task_serge', 'visual_attention', 'frontal_eye_field'
                   'visual_field_map', 'visual_up_down_map', 'ct_anatomy_scan', 'faces_emotion', 'flair_anatomy_scan'
                   ]
-
+TEMP_INACTIVE_TASK_ACTIVE = ['visual_speed_task']
 # XEL-71
 NO_MANAGER_TASKS = ['bair_hrfpattern', 'anatomie', 'angio', 'bair_prf', 'bair_spatialobject', 'bair_spatialpattern',
-                    'bair_temporalpattern', 'balltalk', 'calc', 'count', 'picnam', 'verb', 'mouth_movements']
+                    'bair_temporalpattern', 'balltalk', 'calc', 'count', 'picnam', 'verb']
 
+TEMP_NO_MANAGER_TASKS_ACTIVE = ['mouth_movements']
 # ASP-71
 UNKNOWN_TASKS = ['instant_aud_recall', 'mental_rotation', 'move_imagine_rest', 'move_three_conditions', 'MP2RAGE',
                  'NOTE', 'pd_anatomy_scan', 'pRF_alessio', 'reference_scan', 'retinotopic_map', 'rotating_sphere',
