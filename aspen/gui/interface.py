@@ -75,7 +75,7 @@ from .utils import (
     _protocol_name, _name, _session_name, guess_modality, _sort_session_bci, _check_session_bci,
     _session_bci_hide_fields, _check_change_age, _throw_msg_box, _update_visual_parameters_table,
     _mark_channel_file_visual, get_fp_rec_file, admin_rights, editor_rights, _all_session_types_hide_fields,
-    update_parm_qline_edit, update_experimenter_inside_session, extract_file_name_properties
+    update_parm_qline_edit, update_experimenter_inside_session, extract_file_name_properties, _session_bci_name
     )
 from .modal import (
     NewFile,
@@ -505,7 +505,10 @@ class Interface(QMainWindow):
 
         # XEL-60 adding a display of session number on the session list view
         for index, sess in enumerate(subject_list):  # XEL-60 index
-            item = QListWidgetItemTime(sess, f"# {index + 1}  {_session_name(sess)}")  # XEL-60 adding index to view
+            if sess.name != 'BCI':
+                item = QListWidgetItemTime(sess, f"{_session_name(sess)}")  # XEL-60 adding index to view
+            else:
+                item = QListWidgetItemTime(sess, f"{_session_bci_name(sess)}")  # ASP-161 different display
             if sess.id in self.search.sessions:
                 highlight(item)
             self.lists['sessions'].addItem(item)

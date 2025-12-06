@@ -43,21 +43,23 @@ def _session_name(sess):
     extra = ''
     if sess.name == 'MRI':
         extra = f'{sess.MagneticFieldStrength} '
-
-    # XEL-57 bci patients should use data of creation instead of start_time
-    if sess.start_time is None and sess.name != 'BCI':
+    if sess.start_time is None:
         date_str = 'unknown date'
-    elif sess.name == 'BCI':
-        date_str = f'{sess.data_created: %d %b %Y}'
     else:
         date_str = f'{sess.start_time:%d %b %Y}'
     return f'{extra}{sess.name} ({date_str})'
 
 
+def _session_bci_name(sess):  # ASP-161
+    _number = sess.session_number if sess.session_number is not None else "Session Number!"
+    _date = f"{sess.session_date:%d %b %Y}" if sess.session_date is not None else "Session Date!"
+    return f"{sess.name} # {_number} ({_date})"
+
+
 # XEL-60 need a util function for sorting BCI sessions as they tend not to utilize start_time but data_created
 def _sort_session_bci(bci_sessions: list) -> list:
     """Return a sorted list based on db.session_bci.data_created timestamp."""
-    return sorted(bci_sessions, key=sort_data_created)
+    return sorted(bci_sessions, key=lambda x: getattr(x, "session_number", None) or float("inf"))  # ASP-161 different sorting
 
 
 # ASP-64

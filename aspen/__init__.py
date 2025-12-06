@@ -1,24 +1,22 @@
-__version__ = "1.0.15"
+__version__ = "1.0.16"
 
 
 __changelog__ = (
+    "\n v1.0.16: \n"
+    "New way of displaying the Session list, for BCI fill in session number and session date \n "
+    
     "\n v1.0.15: \n"
     "(new) Session Date under params>sessions bci>session date. Data created under sessions is now locked and automatic. \n "
     
     "\n v1.0.14: \n"
     "Auto collect tags from filenames to fill in parameter>runs. Filenames should follow this principle "
     "'PatientName_app_taskDesign_numClasses_taskname_mode_mentalStrategy_[no longer relevant]date_etc.filetype' \n "
-    
-    "\n v1.0.13: \n"
-    "BCI sessions no longer see the fields Distance to screen, Task Codes and Task Logs under parameters>runs \n "
-    
-    "\n v1.0.12: \n"
-    "- Standard unfilled value color red --> orange \n "
-    "- Standard unfilled value text 0 --> '-'  \n"
-
 )
 
 __full_changelog__ = (
+    "\n v1.0.16: \n"
+    "New way of displaying the Session list, for BCI fill in session number and session date \n "
+    
     "\n v1.0.15: \n"
     "(new) Session Date under params>sessions bci>session date. Data created under sessions is now locked and automatic. \n "
     
