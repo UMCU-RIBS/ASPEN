@@ -1,7 +1,10 @@
-__version__ = "1.0.17"
+__version__ = "1.0.18"
 
 
 __changelog__ = (
+    "\n v1.0.18: \n"
+    "Hotfix new deploy. \n "
+    
     "\n v1.0.17: \n"
     "New task names are added (long list), 2 inactive tasks are put on active. \n "
     
@@ -17,6 +20,8 @@ __changelog__ = (
 )
 
 __full_changelog__ = (
+    "\n v1.0.18: \n"
+    "Hotfix new deploy. \n "
     "\n v1.0.17: \n"
     "New task names are added (long list), 2 inactive tasks are put on active. \n "
     "\n v1.0.16: \n"
