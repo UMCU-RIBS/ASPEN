@@ -75,7 +75,7 @@ from .utils import (
     _protocol_name, _name, _session_name, guess_modality, _sort_session_bci, _check_session_bci,
     _session_bci_hide_fields, _check_change_age, _throw_msg_box, _update_visual_parameters_table,
     _mark_channel_file_visual, get_fp_rec_file, admin_rights, editor_rights, _all_session_types_hide_fields,
-    update_parm_qline_edit, update_experimenter_inside_session, extract_file_name_properties, _session_bci_name
+    update_parm_qline_edit, extract_file_name_properties, _session_bci_name  #update_experimenter_inside_session,
     )
 from .modal import (
     NewFile,
