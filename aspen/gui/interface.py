@@ -1204,6 +1204,8 @@ class Interface(QMainWindow):
                 runs_list,
                 0, False)
 
+            # update_experimenter_inside_session(self, current_session)
+
         elif level == 'recordings':
             current_run = self.current('runs')
 

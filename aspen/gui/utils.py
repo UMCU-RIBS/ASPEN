@@ -5,7 +5,9 @@ from typing import Union, Any
 from PyQt5.QtCore import QDate, Qt
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QSpinBox, QMessageBox, QTableWidget, QLineEdit
-from aspen.api.utils import sort_data_created
+
+# from aspen.api import Session
+# from aspen.api.utils import sort_data_created
 from aspen.database import lookup_allowed_values
 from aspen.gui.models import FilesWidget
 
@@ -310,10 +312,41 @@ def update_parm_qline_edit(value: str = None, widget: QLineEdit = None) -> None:
         widget.setText(value)
 
 
+# def update_experimenter_inside_session(ref, session: int):
+#     """Function to fill-out experimenters based on all the runs within one session. TODO: need to check behaviour when no experimenter in session"""
+#
+#     print(f"__debug__ my session.id = {session}")
+#
+#     query = QSqlQuery(ref.db['db'])
+#     query.prepare("SELECT runs.id FROM runs WHERE runs.session_id = :id")
+#     query.bindValue(':id', ref.id)
+#     if not query.exec():
+#         raise SyntaxError(query.lastError().text())
+#
+#     list_of_runs = []
+#     while query.next():
+#         list_of_runs.append(
+#             Run(ref.db, id=query.value('id'), session=ref))
+#
+#     # query = f"SELECT * FROM `runs` WHERE session_id = '{session}'"  # sql get all runs of this id
+#
+#     _current_runs = sess.list_runs
+#     # all_runs_in_session = []  # get all runs in list
+#     # print(f"__debug all runs in session = {_current_runs}")
+#     experimenters_in_runs = set()
+#
+#     # for run in all_runs_in_session:  # check if experimenter is present in all runs
+#     #     if run['experimenter'] is not None:  # get experimenter info from runs
+#     #         experimenters_in_runs.add(run['experimenter'])
+#     # if experimenters_in_runs is not None:
+#     #     for run in all_runs_in_session:
+#     #         run['experimenter'] = experimenters_in_runs
+
+
 def extract_file_name_properties(ref, file_path: str):
     """Simple function to attempt filling in some params>runs>fields by reading the filename. This function assumes the
-    following file name structure 'PatientName_app_taskDesign_numClasses_task_mode_mentalStrategy_date.filetype'. The
-    function will assume this structure, filter out the name and then collect the 6 tags needed. It will however
+    following file name structure 'PatientName_app_taskDesign_numClasses_task_mode_mentalStrategy_date_run.filetype'.
+    The function will assume this structure, filter out the name and then collect the 6 tags needed. It will however
     discard the taskname as that will be filled in already through Aspen run creation."""
     # ASP-168 auto extract info from filename and fill them in
     _ = os.path.basename(file_path)  # filename = basename
