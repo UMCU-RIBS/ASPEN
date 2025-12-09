@@ -367,7 +367,7 @@ def extract_file_name_properties(ref, file_path: str):
         ref.dict_run_params['Application'].setCurrentText(app_map[_[0]])
     if _[1] in ("ER", "BD", "NA"):  # design
         ref.dict_run_params['Task Design'].setCurrentText(_[1])
-    if _[2] is not None:  # num_class
+    if str.isdigit(_[2]):  # num_class check if the num_class is digit else it will silently fail
         ref.dict_run_params['Number Classes'].setValue(int(_[2]))
     if _[4] in _values_mode:  # mode
         ref.dict_run_params['Mode'].setCurrentText(_[4])
