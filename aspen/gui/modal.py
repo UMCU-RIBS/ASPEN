@@ -291,7 +291,6 @@ def make_table(ev):
 
 
 class Popup_Experimenters(QPushButton):
-
     def __init__(self, run, parent):
         self.run = run
         super().__init__(parent)

@@ -75,7 +75,7 @@ from .utils import (
     _protocol_name, _name, _session_name, guess_modality, _sort_session_bci, _check_session_bci,
     _session_bci_hide_fields, _check_change_age, _throw_msg_box, _update_visual_parameters_table,
     _mark_channel_file_visual, get_fp_rec_file, admin_rights, editor_rights, _all_session_types_hide_fields,
-    update_parm_qline_edit, extract_file_name_properties, _session_bci_name  #update_experimenter_inside_session,
+    update_parm_qline_edit, extract_file_name_properties, _session_bci_name, update_experimenter_inside_session,
     )
 from .modal import (
     NewFile,
@@ -91,7 +91,7 @@ from .config import load_config, Ldap, LdapLogin
 from aspen import __version__, __changelog__
 
 # XEL-71
-INACTIVE_TASKS = ['abled', 'action_selection', 'animal', 'angiography_scan', 'audcomsent', 'audcomword',
+INACTIVE_TASKS = ['abled', 'action_selection', 'animal', 'audcomsent', 'audcomword',
                   'auditory_attention', 'bargrasp', 'auditory_localizer', 'bair_finger_mapping',
                   'bci_cursor_control_attent', 'bci_cursor_control_motor', 'bci_cursor_control_taal',
                   'bci_cursor_control_wm', 'bci_cursor_control_visual', 'boldhand', 'boldsat', 'checkerboard',
@@ -104,20 +104,21 @@ INACTIVE_TASKS = ['abled', 'action_selection', 'animal', 'angiography_scan', 'au
                   'movieben', 'verb_it', 'natural_rest', 'notask', 'noun', 'number', 'numerosity', 'noun'
                   'phonemes_and_jipjanneke', 'phonemes', 'vowels', 'visual_field_map', 'visual_left_right_map',
                   'visual_task_serge', 'visual_attention', 'frontal_eye_field'
-                  'visual_field_map', 'visual_up_down_map', 'ct_anatomy_scan', 'faces_emotion', 'flair_anatomy_scan'
+                  'visual_field_map', 'visual_up_down_map', 'faces_emotion', 'flair_anatomy_scan'
                   ]
-TEMP_INACTIVE_TASK_ACTIVE = ['visual_speed_task']
 # XEL-71
 NO_MANAGER_TASKS = ['bair_hrfpattern', 'anatomie', 'angio', 'bair_prf', 'bair_spatialobject', 'bair_spatialpattern',
-                    'bair_temporalpattern', 'balltalk', 'calc', 'count', 'picnam', 'verb']
+                    'bair_temporalpattern', 'calc', 'count', 'picnam', 'verb']
 
-TEMP_NO_MANAGER_TASKS_ACTIVE = ['mouth_movements']
 # ASP-71
-UNKNOWN_TASKS = ['instant_aud_recall', 'mental_rotation', 'move_imagine_rest', 'move_three_conditions', 'MP2RAGE',
-                 'NOTE', 'pd_anatomy_scan', 'pRF_alessio', 'reference_scan', 'retinotopic_map', 'rotating_sphere',
+UNKNOWN_TASKS = ['instant_aud_recall', 'mental_rotation', 'MP2RAGE',
+                 'NOTE', 'pRF_alessio', 'reference_scan', 'retinotopic_map', 'rotating_sphere',
                  'single_words', 'sixcatlocisidiff', 'sixcatloctemporal', 'vardy_beeps', 'vts_prf',
-                 'vts_temporalpattern', 'balltlk', 'flipballistic', 'flipintegration', 'fliprelaxperturb',
+                 'vts_temporalpattern', 'flipballistic', 'flipintegration', 'fliprelaxperturb',
                  'flipbaseline', 'presentation', 'palmtree', 'no_app']
+
+TEMP_INACTIVE_TASK_ACTIVE = ['visual_speed_task']
+TEMP_NO_MANAGER_TASKS_ACTIVE = ['mouth_movements',  'balltlk', 'move_imagine_rest', 'move_three_conditions']
 
 # XEL-71 one list to filter them all
 FILTER_TASKS = INACTIVE_TASKS
@@ -522,7 +523,6 @@ class Interface(QMainWindow):
         self.lists['protocols'].setCurrentRow(0)
 
     def list_runs(self, sess=None):
-
         if sess is None or sess is False:
             sess = self.current('sessions')
 
@@ -1204,8 +1204,6 @@ class Interface(QMainWindow):
                 runs_list,
                 0, False)
 
-            # update_experimenter_inside_session(self, current_session)
-
         elif level == 'recordings':
             current_run = self.current('runs')
 
@@ -1261,6 +1259,7 @@ class Interface(QMainWindow):
             elif level == 'runs':
                 current_session.add_run(text, self.current_user)
                 self.list_runs(current_session)
+                update_experimenter_inside_session(self, current_session)  # ASP-199
 
             elif level == 'recordings':
                 current_run.add_recording(text)
@@ -1282,7 +1281,6 @@ class Interface(QMainWindow):
                 self.list_recordings(self.current('runs'))
                 self.list_channels_electrodes(current_recording)
                 self.list_params()
-
             self.modified()
 
     @editor_rights

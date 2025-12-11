@@ -4,12 +4,15 @@ from typing import Union, Any
 
 from PyQt5.QtCore import QDate, Qt
 from PyQt5.QtGui import QColor
+from PyQt5.QtSql import QSqlQuery
 from PyQt5.QtWidgets import QSpinBox, QMessageBox, QTableWidget, QLineEdit
 
+from aspen.api import Run, Session
 # from aspen.api import Session
 # from aspen.api.utils import sort_data_created
 from aspen.database import lookup_allowed_values
 from aspen.gui.models import FilesWidget
+from aspen.gui.design_stylesheet import *
 
 
 TASKNAMES_MORE_PARMS = ["MultiClassScreening"]  # Runs with the Specified Task Name that need extra parameters filled in for an alternative namechange
@@ -22,7 +25,8 @@ PARAMETERS_DISABLE_FOR_SESSION_BCI = ['Xelo Stem', 'Date of Surgery', 'ASCA Scor
 PARAMETERS_DISABLE_FOR_SESSION_ALL = ['Xelo Stem', 'Alternative Name', 'Classes', 'Modified By', 'Modified Date', 'Effort']  # Fields that will be hidden for all session types
 COLOR_HIGHLIGHT_LIGHT_GREEN: QColor = QColor(0, 255, 0, 50)
 COLOR_HIGHLIGHT_GRAY: QColor = QColor(80, 70, 70, 50)
-
+global _EEC
+_EEC = 0
 
 def _protocol_name(protocol):
     if protocol.metc == 'Request from clinic':
@@ -149,7 +153,7 @@ def _check_change_age(date_of_birth: QDate, start_time: QDate, target_widget: QS
 
 
 # ASP-102 Adding a reusable QMessageBox for warnings
-def _throw_msg_box(title: str, text: str, button_ok: bool = True, msg_type: str = None) -> None:
+def _throw_msg_box(title: str, text: str, button_ok: bool = True, msg_type: str = None, cancel_button_text: str = None) -> None:
     """Reusable function for generating QMessageBox screens for the user. """
     _msg = QMessageBox()
     _msg.setWindowTitle(title)
@@ -163,6 +167,9 @@ def _throw_msg_box(title: str, text: str, button_ok: bool = True, msg_type: str 
         _msg.setStandardButtons(QMessageBox.Ok)
     else:
         _msg.setStandardButtons(QMessageBox.Cancel)
+        if cancel_button_text:
+            cancel_button = _msg.button(QMessageBox.StandardButton.Cancel)
+            cancel_button.setText(cancel_button_text)
     _msg.exec()
 
 
@@ -312,35 +319,25 @@ def update_parm_qline_edit(value: str = None, widget: QLineEdit = None) -> None:
         widget.setText(value)
 
 
-# def update_experimenter_inside_session(ref, session: int):
-#     """Function to fill-out experimenters based on all the runs within one session. TODO: need to check behaviour when no experimenter in session"""
-#
-#     print(f"__debug__ my session.id = {session}")
-#
-#     query = QSqlQuery(ref.db['db'])
-#     query.prepare("SELECT runs.id FROM runs WHERE runs.session_id = :id")
-#     query.bindValue(':id', ref.id)
-#     if not query.exec():
-#         raise SyntaxError(query.lastError().text())
-#
-#     list_of_runs = []
-#     while query.next():
-#         list_of_runs.append(
-#             Run(ref.db, id=query.value('id'), session=ref))
-#
-#     # query = f"SELECT * FROM `runs` WHERE session_id = '{session}'"  # sql get all runs of this id
-#
-#     _current_runs = sess.list_runs
-#     # all_runs_in_session = []  # get all runs in list
-#     # print(f"__debug all runs in session = {_current_runs}")
-#     experimenters_in_runs = set()
-#
-#     # for run in all_runs_in_session:  # check if experimenter is present in all runs
-#     #     if run['experimenter'] is not None:  # get experimenter info from runs
-#     #         experimenters_in_runs.add(run['experimenter'])
-#     # if experimenters_in_runs is not None:
-#     #     for run in all_runs_in_session:
-#     #         run['experimenter'] = experimenters_in_runs
+def update_experimenter_inside_session(ref, session: Session):
+    """Function to fill-out experimenters based on all the runs within one session."""
+    if session.name == 'BCI':
+        query = QSqlQuery(ref.db['db'])
+        query.prepare("SELECT runs.id FROM runs WHERE runs.session_id = :id")
+        query.bindValue(':id', session.id)
+        if not query.exec():
+            raise SyntaxError(query.lastError().text())
+
+        experimenters_set = set()
+        _all_runs = []
+        # Add all experimenters into a set so we are left with unique names
+        while query.next():
+            _all_runs.append(Run(ref.db, id=query.value('id'), session=session))
+            for experimenter in Run(ref.db, id=query.value('id'), session=session).experimenters:  # Done in loop if a run has more than 1 name
+                experimenters_set.add(experimenter)
+
+        for run in _all_runs:  # For all runs we've collected so far
+            run.experimenters = experimenters_set
 
 
 def extract_file_name_properties(ref, file_path: str):
@@ -351,6 +348,7 @@ def extract_file_name_properties(ref, file_path: str):
     # ASP-168 auto extract info from filename and fill them in
     _ = os.path.basename(file_path)  # filename = basename
     _ = _.split('_')  # all 'elements' in filename split with _ in string
+    _ee = _[0]
     _ = _[1:7]  # name_RW_ER_6_MCS_NA_gestures_date -> [RW, ER, 6, MCS, NA, gestures]
 
     app_map = {
@@ -359,20 +357,25 @@ def extract_file_name_properties(ref, file_path: str):
     _values_mode = lookup_allowed_values(ref.db['db'], 'runs', 'mode')
     _values_strategy = lookup_allowed_values(ref.db['db'], 'runs', 'mental_strategy')
 
+    if _ee in ("RW", "PT", "BCI2000", "NA", "BOLT", "PRES"):
+        _eec_check(ref)
     if len(_) < 5:
         print("file_name is incorrect stopping auto fill-in")
         _throw_msg_box("file name inconsistent", "Can't extract info from filename, make sure it follows the guidelines")
         return
-    if _[0] in ("RW", "PT", "BCI2000", "NA", "BOLT", "PRES"):  # application
-        ref.dict_run_params['Application'].setCurrentText(app_map[_[0]])
-    if _[1] in ("ER", "BD", "NA"):  # design
-        ref.dict_run_params['Task Design'].setCurrentText(_[1])
-    if str.isdigit(_[2]):  # num_class check if the num_class is digit else it will silently fail
-        ref.dict_run_params['Number Classes'].setValue(int(_[2]))
-    if _[4] in _values_mode:  # mode
-        ref.dict_run_params['Mode'].setCurrentText(_[4])
-    if _[5] in _values_strategy:  # mental_strategy
-        ref.dict_run_params['Mental Strategy'].setCurrentText(_[5])
+    try:
+        if _[0] in ("RW", "PT", "BCI2000", "NA", "BOLT", "PRES"):  # application
+            ref.dict_run_params['Application'].setCurrentText(app_map[_[0]])
+        if _[1] in ("ER", "BD", "NA"):  # design
+            ref.dict_run_params['Task Design'].setCurrentText(_[1])
+        if str.isdigit(_[2]):  # num_class check if the num_class is digit else it will silently fail
+            ref.dict_run_params['Number Classes'].setValue(int(_[2]))
+        if _[4] in _values_mode:  # mode
+            ref.dict_run_params['Mode'].setCurrentText(_[4])
+        if _[5] in _values_strategy or _[5] is not None:  # mental_strategy
+            ref.dict_run_params['Mental Strategy'].setCurrentText(_[5])
+    except IndexError as e:
+        print("Filename is incorrect, please follow filename conventions.")
 
 
 def admin_rights(func):
@@ -393,3 +396,35 @@ def editor_rights(func):
         _throw_msg_box("Not enough Rights", "You need to have at least Editor rights for this action")
         return
     return check_user
+
+
+def _eec_check(ref) -> None:
+    global _EEC
+    print(_EEC)
+    if _EEC == 0:
+        _throw_msg_box("Wow you've upset Aspen...",
+                       "That was mean! Please reconsider your actions and add a patient name to your file name :(",
+                       msg_type="ok",
+                       button_ok=True)
+        # ref.t_files.setStyleSheet(DESIGN)
+        # ref.t_params.setStyleSheet(DESIGN_2)
+        # ref.col_recchanelec.setStyleSheet(DESIGN_3)
+    elif _EEC == 1:
+        _throw_msg_box("Aspen is in tears",
+                       "You are doing this on purpose?? Stop. Please.",
+                       msg_type="ok",
+                       button_ok=False)
+    elif _EEC == 2:
+        _throw_msg_box("Aspen is angry",
+                       "It is NOT too late to turn back, I won't...no I CAN'T stop Aspen anymore.",
+                       button_ok=False)
+    elif _EEC == 3:
+        _throw_msg_box("", r"""(╯°□°）╯︵ ┻━┻""",
+                       button_ok=False,
+                       cancel_button_text="#a8.!%)*Jm,[[[* \n Y*@(#FSAJG \n !&SGHAN)!*%&}{{{{?>!")
+        ref.t_files.setStyleSheet(DESIGN)
+        ref.t_params.setStyleSheet(DESIGN_2)
+        # ref.col_recchanelec.setStyleSheet(DESIGN_3)
+        # ref.tabwidget_chan_elec.setStyleSheet(DESIGN_4)
+        # ref.col_sessmetc.setStyleSheet(DESIGN_5)
+    _EEC += 1

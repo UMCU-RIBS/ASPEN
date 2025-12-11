@@ -1,25 +1,25 @@
-__version__ = "1.0.18"
+__version__ = "1.0.19"
 
 
 __changelog__ = (
+    "\n v1.0.19: \n"
+    "Adding a run (in bci session) will mirror the experimenters field for all runs in that session. \n "
     "\n v1.0.18: \n"
     "Hotfix new deploy. \n "
-    
     "\n v1.0.17: \n"
     "New task names are added (long list), 2 inactive tasks are put on active. \n "
-    
     "\n v1.0.16: \n"
     "New way of displaying the Session list, for BCI fill in session number and session date \n "
-    
     "\n v1.0.15: \n"
     "(new) Session Date under params>sessions bci>session date. Data created under sessions is now locked and automatic. \n "
-    
     "\n v1.0.14: \n"
     "Auto collect tags from filenames to fill in parameter>runs. Filenames should follow this principle "
     "'PatientName_app_taskDesign_numClasses_taskname_mode_mentalStrategy_[no longer relevant]date_etc.filetype' \n "
 )
 
 __full_changelog__ = (
+    "\n v1.0.19: \n"
+    "Adding a run (in bci session) will mirror the experimenters field for all runs in that session. \n "
     "\n v1.0.18: \n"
     "Hotfix new deploy. \n "
     "\n v1.0.17: \n"
