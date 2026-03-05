@@ -28,6 +28,7 @@ COLOR_HIGHLIGHT_GRAY: QColor = QColor(80, 70, 70, 50)
 global _EEC
 _EEC = 0
 
+
 def _protocol_name(protocol):
     if protocol.metc == 'Request from clinic':
         return 'Request from clinic'

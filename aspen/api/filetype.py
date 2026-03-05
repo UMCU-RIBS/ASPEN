@@ -60,6 +60,9 @@ def parse_filetype(file_path):
             data_type = 'Cortex'
         else:
             data_type = 'Electrodes'
+    # ASP-223 adding support for xdf files to be recognized
+    elif suffix == '.xdf':
+        data_type = 'lsl'
 
     else:
         raise ValueError(f'Unknown file suffix "{suffix}"')
