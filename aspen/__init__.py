@@ -1,7 +1,9 @@
-__version__ = "1.0.20"
+__version__ = "1.21"
 
 
 __changelog__ = (
+    "\n v1.21: \n"
+    "Added Verb, Picnam, Count, Mario tasks to be selectable again, changed all tasknames to 'task-name' convention. \n "
     "\n v1.0.20: \n"
     "Added support for '.xdf' filetypes, will be recognized as lsl. \n "
     "\n v1.0.19: \n"
@@ -10,13 +12,11 @@ __changelog__ = (
     "Hotfix new deploy. \n "
     "\n v1.0.17: \n"
     "New task names are added (long list), 2 inactive tasks are put on active. \n "
-    "\n v1.0.16: \n"
-    "New way of displaying the Session list, for BCI fill in session number and session date \n "
-    "\n v1.0.15: \n"
-    "(new) Session Date under params>sessions bci>session date. Data created under sessions is now locked and automatic. \n "
 )
 
 __full_changelog__ = (
+    "\n v1.21: \n"
+    "Added Verb, Picnam, Count, Mario tasks to be selectable again. \n "
     "\n v1.0.20: \n"
     "Added support for '.xdf' filetypes, will be recognized as lsl. \n "
     "\n v1.0.19: \n"

@@ -90,35 +90,35 @@ from .modal import (
 from .config import load_config, Ldap, LdapLogin
 from aspen import __version__, __changelog__
 
-# XEL-71
+# ASP-71, ASP-220 re-allowing 'mario'
 INACTIVE_TASKS = ['abled', 'action_selection', 'animal', 'audcomsent', 'audcomword',
-                  'auditory_attention', 'bargrasp', 'auditory_localizer', 'bair_finger_mapping',
-                  'bci_cursor_control_attent', 'bci_cursor_control_motor', 'bci_cursor_control_taal',
-                  'bci_cursor_control_wm', 'bci_cursor_control_visual', 'boldhand', 'boldsat', 'checkerboard',
-                  'clickaway', 'deleted', 'divatt', 'eccentricity_mapping', 'emotion', 'eye_task', 'eyes_open_close',
-                  'faces_houses', 'facial_expressions', 'movi', 'feedback_wm', 'flip', 'gestures', 'music',
-                  'grootmoeder', 'instant_aud_recall', 'knottask', 'language', 'line_bisection', 'mario',
-                  'mental_rotation', 'mooney', 'motionmapper', 'polar_mapping', 'portem', 'pulse', 'sweeptone',
-                  'reading_task', 'switchspeed', 'retinotopic_map', 'rotating_sphere', 'rotmotion', 'saccade',
-                  'sendkeys', 'threshold', 'touchy', 'smartbrain', 'soc_patterns', 'vardy_beeps', 'sternberg',
-                  'movieben', 'verb_it', 'natural_rest', 'notask', 'noun', 'number', 'numerosity', 'noun'
-                  'phonemes_and_jipjanneke', 'phonemes', 'vowels', 'visual_field_map', 'visual_left_right_map',
-                  'visual_task_serge', 'visual_attention', 'frontal_eye_field'
-                  'visual_field_map', 'visual_up_down_map', 'faces_emotion', 'flair_anatomy_scan'
+                  'auditory-attention', 'bargrasp', 'auditory-localizer', 'bair-finger-mapping',
+                  'bci-cursor-control-attent', 'bci-cursor-control-motor', 'bci-cursor-control-taal',
+                  'bci-cursor-control-wm', 'bci-cursor-control-visual', 'boldhand', 'boldsat', 'checkerboard',
+                  'clickaway', 'deleted', 'divatt', 'eccentricity-mapping', 'emotion', 'eye-task', 'eyes-open-close',
+                  'faces-houses', 'facial-expressions', 'movi', 'feedback-wm', 'flip', 'gestures', 'music',
+                  'grootmoeder', 'instant-aud-recall', 'knottask', 'language', 'line-bisection',
+                  'mental-rotation', 'mooney', 'motionmapper', 'polar-mapping', 'portem', 'pulse', 'sweeptone',
+                  'reading-task', 'switchspeed', 'retinotopic-map', 'rotating-sphere', 'rotmotion', 'saccade',
+                  'sendkeys', 'threshold', 'touchy', 'smartbrain', 'soc-patterns', 'vardy-beeps', 'sternberg',
+                  'movieben', 'verb-it', 'natural-rest', 'notask', 'noun', 'number', 'numerosity', 'noun'
+                  'phonemes-and-jipjanneke', 'phonemes', 'vowels', 'visual-field-map', 'visual-left-right-map',
+                  'visual-task-serge', 'visual-attention', 'frontal-eye-field'
+                  'visual-field-map', 'visual-up-down-map', 'faces-emotion', 'flair-anatomy-scan'
                   ]
-# XEL-71
-NO_MANAGER_TASKS = ['bair_hrfpattern', 'anatomie', 'angio', 'bair_prf', 'bair_spatialobject', 'bair_spatialpattern',
-                    'bair_temporalpattern', 'calc', 'count', 'picnam', 'verb']
+# ASP-71, ASP-220 re-allowing 'verb','picnam', 'count'
+NO_MANAGER_TASKS = ['bair-hrfpattern', 'anatomie', 'angio', 'bair-prf', 'bair-spatialobject', 'bair-spatialpattern',
+                    'bair-temporalpattern', 'calc']
 
 # ASP-71
-UNKNOWN_TASKS = ['instant_aud_recall', 'mental_rotation', 'MP2RAGE',
-                 'NOTE', 'pRF_alessio', 'reference_scan', 'retinotopic_map', 'rotating_sphere',
-                 'single_words', 'sixcatlocisidiff', 'sixcatloctemporal', 'vardy_beeps', 'vts_prf',
-                 'vts_temporalpattern', 'flipballistic', 'flipintegration', 'fliprelaxperturb',
-                 'flipbaseline', 'presentation', 'palmtree', 'no_app']
+UNKNOWN_TASKS = ['instant-aud-recall', 'mental-rotation', 'MP2RAGE',
+                 'NOTE', 'pRF-alessio', 'reference-scan', 'retinotopic-map', 'rotating-sphere',
+                 'single-words', 'sixcatlocisidiff', 'sixcatloctemporal', 'vardy-beeps', 'vts-prf',
+                 'vts-temporalpattern', 'flipballistic', 'flipintegration', 'fliprelaxperturb',
+                 'flipbaseline', 'presentation', 'palmtree', 'no-app']
 
-TEMP_INACTIVE_TASK_ACTIVE = ['visual_speed_task']
-TEMP_NO_MANAGER_TASKS_ACTIVE = ['mouth_movements',  'balltlk', 'move_imagine_rest', 'move_three_conditions']
+TEMP_INACTIVE_TASK_ACTIVE = ['visual-speed-task']
+TEMP_NO_MANAGER_TASKS_ACTIVE = ['mouth-movements',  'balltlk', 'move-imagine-rest', 'move-three-conditions']
 
 # XEL-71 one list to filter them all
 FILTER_TASKS = INACTIVE_TASKS
