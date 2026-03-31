@@ -429,3 +429,22 @@ def _eec_check(ref) -> None:
         # ref.tabwidget_chan_elec.setStyleSheet(DESIGN_4)
         # ref.col_sessmetc.setStyleSheet(DESIGN_5)
     _EEC += 1
+
+
+# ASP-229 bug fix for how the Task Names were handled under params
+def apply_task_name_sorting_filtering(combobox, ref, filters):
+    """In simple terms: receive combobox, disable signals, save current item, clear all items, get possible task-names
+    with filters, now apply all the tasknames, try to set the original current item. allow signals."""
+
+    combobox.blockSignals(True)
+    _current_text = combobox.currentText()
+    combobox.clear()
+
+    _runs_list = sorted(lookup_allowed_values(ref.db['db'], 'runs', 'task_name'), key=str.casefold)
+    _runs_list = [task for task in _runs_list if task not in filters]
+
+    combobox.addItems(_runs_list)
+    _index = combobox.findText(_current_text)
+    if _index != -1:
+        combobox.setCurrentIndex(_index)
+    combobox.blockSignals(False)

@@ -1,7 +1,9 @@
-__version__ = "1.21"
+__version__ = "1.22"
 
 
 __changelog__ = (
+    "\n v1.22: \n"
+    "Fixed the Task Names under param>runs>Task Names, should now display correct names. \n "
     "\n v1.21: \n"
     "Added Verb, Picnam, Count, Mario tasks to be selectable again, changed all tasknames to 'task-name' convention. \n "
     "\n v1.0.20: \n"
@@ -10,11 +12,11 @@ __changelog__ = (
     "Adding a run (in bci session) will mirror the experimenters field for all runs in that session. \n "
     "\n v1.0.18: \n"
     "Hotfix new deploy. \n "
-    "\n v1.0.17: \n"
-    "New task names are added (long list), 2 inactive tasks are put on active. \n "
 )
 
 __full_changelog__ = (
+    "\n v1.22: \n"
+    "Fixed the Task Names under param>runs>Task Names, should now display correct names. \n "
     "\n v1.21: \n"
     "Added Verb, Picnam, Count, Mario tasks to be selectable again. \n "
     "\n v1.0.20: \n"

@@ -76,6 +76,7 @@ from .utils import (
     _session_bci_hide_fields, _check_change_age, _throw_msg_box, _update_visual_parameters_table,
     _mark_channel_file_visual, get_fp_rec_file, admin_rights, editor_rights, _all_session_types_hide_fields,
     update_parm_qline_edit, extract_file_name_properties, _session_bci_name, update_experimenter_inside_session,
+    apply_task_name_sorting_filtering
     )
 from .modal import (
     NewFile,
@@ -149,6 +150,7 @@ class Interface(QMainWindow):
         self.all_current_params = None
         self.current_user_rights = None
         self.dict_run_params = None
+        self.runs_list = None
         self.config = load_config()
         self.ldap = Ldap()
         self.current_user = self.ldap.current_user
@@ -628,6 +630,9 @@ class Interface(QMainWindow):
             if 'Start Time' in parameters:
                 _start_time = parameters['Start Time']
                 _start_time.dateChanged.connect(lambda: _check_change_age(_dob, _start_time, _age))
+            if 'Task Name' in parameters:  # ASP-229 fixing a bug for display of Task Names in params
+                _task_names_combobox = parameters['Task Name']
+                apply_task_name_sorting_filtering(_task_names_combobox, self, FILTER_TASKS)
 
             if _check_session_bci(current_session_name):  # ASP-64 Check if dealing with BCI-session, clear the params
                 _session_bci_hide_fields(parameters)
@@ -1196,6 +1201,7 @@ class Interface(QMainWindow):
 
             # XEL-71 Without deleting earlier tasks, we filter the list the user gets to see, check top of file for list
             runs_list = [task for task in runs_list if task not in FILTER_TASKS]
+            self.runs_list = runs_list
 
             text, ok = QInputDialog.getItem(
                 self,
