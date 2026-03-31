@@ -1,7 +1,9 @@
-__version__ = "1.22"
+__version__ = "1.23"
 
 
 __changelog__ = (
+    "\n v1.23: \n"
+    "Filename checks for automatic filling in parameters is now limited to BCI sessions. \n "
     "\n v1.22: \n"
     "Fixed the Task Names under param>runs>Task Names, should now display correct names. \n "
     "\n v1.21: \n"
@@ -10,11 +12,11 @@ __changelog__ = (
     "Added support for '.xdf' filetypes, will be recognized as lsl. \n "
     "\n v1.0.19: \n"
     "Adding a run (in bci session) will mirror the experimenters field for all runs in that session. \n "
-    "\n v1.0.18: \n"
-    "Hotfix new deploy. \n "
 )
 
 __full_changelog__ = (
+    "\n v1.23: \n"
+    "Filename checks for automatic filling in parameters is now limited to BCI sessions. \n "
     "\n v1.22: \n"
     "Fixed the Task Names under param>runs>Task Names, should now display correct names. \n "
     "\n v1.21: \n"

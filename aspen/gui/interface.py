@@ -1366,7 +1366,9 @@ class Interface(QMainWindow):
             if item is None:  # ASP-102 Providing a bit more information to the user if no recording can be found.
                 _throw_msg_box('Warning!', "Please add a Recording, before you add recording file(s).")
             else:  # ASP-102 only add the file and list_files()/modified() if item is not None, prevent XCB error
-                extract_file_name_properties(self, path)
+                current_session_name = self.lists['sessions'].currentItem().data(Qt.UserRole).name
+                if _check_session_bci(current_session_name):  # ASP-226 adding a check to only do this for bci sess
+                    extract_file_name_properties(self, path)
                 item.add_file(format_file, path)
                 self.list_files()
                 self.modified()
