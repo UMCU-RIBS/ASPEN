@@ -364,6 +364,12 @@ def extract_file_name_properties(ref, file_path: str):
         print("file_name is incorrect stopping auto fill-in")
         _throw_msg_box("file name inconsistent", "Can't extract info from filename, make sure it follows the guidelines")
         return
+    if _[3].lower() != ref.current_task_name.lower():
+        _throw_msg_box("Task Names incorrect!",
+                       f"No filename extraction. \n File taskname: {_[3]}\n run task: {ref.current_task_name}",
+                       False,
+                       cancel_button_text="Cancel")
+        return
     try:
         if _[0] in ("RW", "PT", "BCI2000", "NA", "BOLT", "PRES"):  # application
             ref.dict_run_params['Application'].setCurrentText(app_map[_[0]])
@@ -438,6 +444,7 @@ def apply_task_name_sorting_filtering(combobox, ref, filters):
 
     combobox.blockSignals(True)
     _current_text = combobox.currentText()
+    ref.current_task_name = _current_text
     combobox.clear()
 
     _runs_list = sorted(lookup_allowed_values(ref.db['db'], 'runs', 'task_name'), key=str.casefold)

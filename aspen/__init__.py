@@ -3,7 +3,7 @@ __version__ = "1.23"
 
 __changelog__ = (
     "\n v1.23: \n"
-    "Filename checks for automatic filling in parameters is now limited to BCI sessions. \n "
+    "Filename checks for automatic filling in parameters is now limited to BCI sessions. Task name is now also checked. \n "
     "\n v1.22: \n"
     "Fixed the Task Names under param>runs>Task Names, should now display correct names. \n "
     "\n v1.21: \n"

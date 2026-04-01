@@ -151,6 +151,7 @@ class Interface(QMainWindow):
         self.current_user_rights = None
         self.dict_run_params = None
         self.runs_list = None
+        self.current_task_name = None
         self.config = load_config()
         self.ldap = Ldap()
         self.current_user = self.ldap.current_user
